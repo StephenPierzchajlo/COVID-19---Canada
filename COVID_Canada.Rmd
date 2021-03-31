@@ -2,6 +2,7 @@
 title: "COVID-19 Canadian Data: Pre-processing And Simple Visualizations"
 author: "Stephen Pierzchajlo"
 output: github_document
+always_allow_html: true
 
 ---
 
@@ -31,8 +32,9 @@ library(dplyr)
 library(ggthemes)
 library(hrbrthemes)
 library(devtools)
-devtools::install_github('cttobin/ggthemr')
+#devtools::install_github('cttobin/ggthemr')
 library(ggthemr)
+library(kableExtra)
 
 ```
 
@@ -50,10 +52,13 @@ COVID_Global_Deaths_Wide <-read_csv(url("https://raw.githubusercontent.com/CSSEG
 
 ```
 
-As seen below, the *.csv* file has been arranged such that each column is a date, with the value in a cell corresponding to the total cases up until that point in time. This format is not easy to work with, and it means a new column will appear every day. After 1 week this dataframe will have 7 more columns. 
+As seen below, the *.csv* file has been arranged such that each column is a date, with the value in a cell corresponding to the total cases up until that point in time. This format is not easy to work with, and it means a new column will appear every day. After 1 week this dataframe will have 7 more columns.
 
 ```{r message=FALSE, warning=FALSE}
+
+# Display first 10 rows and all columns.
 COVID_Global_Wide[1:10, ]
+
 ```
 
 To make the data easier to work with, we can instead create one column called "date", and put each date from each column in it. Now instead of 100s of columns that contain dates, we only have one column.
@@ -64,8 +69,7 @@ To make the data easier to work with, we can instead create one column called "d
 COVID_Global_Long_Date <- gather(COVID_Global_Wide, date, cases, 5:ncol(COVID_Global_Wide), factor_key=TRUE)
 
 # Total global deaths data in long format
-COVID_Global_Deaths_Long_Date <- gather(COVID_Global_Deaths_Wide, date,
-                                        cases, 5:ncol(COVID_Global_Deaths_Wide), factor_key=TRUE)
+COVID_Global_Deaths_Long_Date <- gather(COVID_Global_Deaths_Wide, date, cases, 5:ncol(COVID_Global_Deaths_Wide), factor_key=TRUE)
 
 # Take a look at several of the first rows.
 head(COVID_Global_Long_Date)
@@ -73,6 +77,13 @@ head(COVID_Global_Long_Date)
 ```
 
 Because I only want data from Canada, I need to filter out every other country. Additionally, I'll remove Canadian territories too as there are not too many people who live there. We will do this for both the cases and deaths dataframes.
+
+
+```{r message=FALSE, warning=FALSE}
+
+kable(table(COVID_Global_Long_Date$`Province/State`))
+
+```
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -84,15 +95,28 @@ Covid_Canada <- subset(COVID_Global_Long_Date, `Country/Region` == "Canada")
 # Subset Canadian provinces from total cumulative global deaths data.
 Covid_Canada_Deaths <- subset(COVID_Global_Deaths_Long_Date, `Country/Region` == "Canada")
 
+```
+
+```{r message=FALSE, warning=FALSE}
+
+kable(table(Covid_Canada$`Province/State`))
+
+```
+
+```{r message=FALSE, warning=FALSE}
 ### FILTERING
 
 # For province data, I'm not immediately interested in Canadian Territories, so I'll filter those out.
-Covid_Canada_Filter <- Covid_Canada %>% dplyr::filter(
-  `Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
+Covid_Canada_Filter <- Covid_Canada %>% dplyr::filter(`Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
 
 # For province data, I'm not immediately interested in Canadian Territories, so I'll filter those out.
-Covid_Canada_Deaths_Filter <- Covid_Canada_Deaths %>% dplyr::filter(
-  `Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
+Covid_Canada_Deaths_Filter <- Covid_Canada_Deaths %>% dplyr::filter(`Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
+
+```
+
+```{r message=FALSE, warning=FALSE}
+
+kable(table(Covid_Canada$`Province/State`))
 
 ```
 
@@ -211,7 +235,7 @@ COVID_Canada_Final$Deaths_Per100000 <- as.numeric(COVID_Canada_Final$Deaths_Per1
 COVID_Canada_Final$month <- months(as.POSIXlt(COVID_Canada_Final$Date, format="%d/%m/%Y"))
 ```
 
-```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
 #ggthemr("light")
 ggthemr("flat")
 # Total cases graph.
@@ -236,15 +260,15 @@ ggthemr_reset()
 
 ```
 
-```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+```{r fig.height=5, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
 #ggthemr("light")
 ggthemr("flat")
 # Total cases graph.
 Total_Deaths <- ggplot(COVID_Canada_Final, aes(x = Date, y = Deaths_Per100000, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
   geom_area() +
   labs(x = "March 1st (2020) To Present",
-       y = "Cumulative Cases Per 100,000 People",
-       title = "Coronavirus Cases Per Canadian Province",
+       y = "Cumulative Deaths Per 100,000 People",
+       title = "Coronavirus Deaths Per Canadian Province",
        caption = "Data source: Government of Canada") +
   scale_colour_ggthemr_d() +
   scale_x_date(date_breaks = '1 month',
@@ -267,28 +291,22 @@ Covid_Canada_Deaths_Graph$diff <- ave(Covid_Canada_Deaths_Graph$mean,Covid_Canad
 
 ```
 
-```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
 #ggthemr("dust")
 #ggthemr("light")
 ggthemr("flat")
 # Total cases graph.
 Total_Cases_Hist <- ggplot(COVID_Canada_Final, aes(x = Date, y = DailyCases, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
-  #geom_area() +
   geom_bar(stat = "identity") +
-  facet_wrap(~`Province/State`) +
-  #theme_fivethirtyeight()+
-  #theme_solarized() +
-  #theme_tufte() +
-  #theme_economist() + scale_fill_economist()+
-  ylab("New Daily Cases") +
-  xlab("March 1st To Present") +
+  facet_wrap(~`Province/State`, nrow = 2, ncol = 4) +
+  ylab("Cases Per Day") +
+  xlab("March 1st (2020) To Present") +
   ggtitle("Daily Coronavirus Cases Per Canadian Province")+
   scale_colour_ggthemr_d() +
   scale_x_date(name = 'April 2020 to present', date_breaks = '1 month',
         date_labels = '%B') +
   theme(axis.text.x = element_text(face = "bold", 
                            size = 8, angle = 45, hjust = 1)) +
-  #scale_colour_brewer(type = "seq", palette = "Spectral") +
   gghighlight()
 
 Total_Cases_Hist
@@ -296,28 +314,19 @@ Total_Cases_Hist
 ```
 
 
-```{r fig.height=5, fig.width=8, message=FALSE, warning=FALSE}
-#ggthemr("dust")
-#ggthemr("light")
+```{r fig.height=4, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
 ggthemr("flat")
-# Total cases graph.
 Total_Cases_Hist <- ggplot(COVID_Canada_Final, aes(x = Date, y = DailyDeaths, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
-  #geom_area()+
   geom_bar(stat = "identity") +
-  facet_wrap(~`Province/State`) +
-  #theme_fivethirtyeight()+
-  #theme_solarized() +
-  #theme_tufte() +
-  #theme_economist() + scale_fill_economist()+
-  ylab("New Daily Cases") +
-  xlab("March 1st To Present") +
-  ggtitle("Daily Coronavirus Cases Per Canadian Province")+
+  facet_wrap(~`Province/State`, nrow = 2, ncol = 4) +
+  ylab("Deaths Per Day") +
+  xlab("March 1st (2020) To Present") +
+  ggtitle("Daily Coronavirus Deaths Per Canadian Province")+
   scale_colour_ggthemr_d() +
   scale_x_date(name = 'April 2020 to present', date_breaks = '1 month',
         date_labels = '%B') +
   theme(axis.text.x = element_text(face = "bold", 
                            size = 8, angle = 45, hjust = 1)) +
-  #scale_colour_brewer(type = "seq", palette = "Spectral") +
   gghighlight()
 
 Total_Cases_Hist

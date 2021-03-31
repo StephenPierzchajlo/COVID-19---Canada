@@ -25,8 +25,9 @@ library(dplyr)
 library(ggthemes)
 library(hrbrthemes)
 library(devtools)
-devtools::install_github('cttobin/ggthemr')
+#devtools::install_github('cttobin/ggthemr')
 library(ggthemr)
+library(kableExtra)
 ```
 
 Their are different COVID-19 data repositories, and I am using one that
@@ -53,6 +54,7 @@ means a new column will appear every day. After 1 week this dataframe
 will have 7 more columns.
 
 ``` r
+# Display first 10 rows and all columns.
 COVID_Global_Wide[1:10, ]
 ```
 
@@ -100,8 +102,7 @@ called “date”, and put each date from each column in it. Now instead of
 COVID_Global_Long_Date <- gather(COVID_Global_Wide, date, cases, 5:ncol(COVID_Global_Wide), factor_key=TRUE)
 
 # Total global deaths data in long format
-COVID_Global_Deaths_Long_Date <- gather(COVID_Global_Deaths_Wide, date,
-                                        cases, 5:ncol(COVID_Global_Deaths_Wide), factor_key=TRUE)
+COVID_Global_Deaths_Long_Date <- gather(COVID_Global_Deaths_Wide, date, cases, 5:ncol(COVID_Global_Deaths_Wide), factor_key=TRUE)
 
 # Take a look at several of the first rows.
 head(COVID_Global_Long_Date)
@@ -123,6 +124,1404 @@ not too many people who live there. We will do this for both the cases
 and deaths dataframes.
 
 ``` r
+kable(table(COVID_Global_Long_Date$`Province/State`)) %>%
+  kable_styling("striped") %>%
+  scroll_box(width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+Var1
+
+</th>
+
+<th style="text-align:right;">
+
+Freq
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alberta
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Anguilla
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Anhui
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Aruba
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Australian Capital Territory
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Beijing
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Bermuda
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Bonaire, Sint Eustatius and Saba
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+British Columbia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+British Virgin Islands
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Cayman Islands
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Channel Islands
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Chongqing
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Curacao
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Diamond Princess
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Falkland Islands (Malvinas)
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Faroe Islands
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+French Guiana
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+French Polynesia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Fujian
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Gansu
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Gibraltar
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Grand Princess
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Greenland
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Guadeloupe
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Guangdong
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Guangxi
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Guizhou
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Hainan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Hebei
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Heilongjiang
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Henan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Hong Kong
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Hubei
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Hunan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Inner Mongolia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Isle of Man
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Jiangsu
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Jiangxi
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Jilin
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Liaoning
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Macau
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Manitoba
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Martinique
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Mayotte
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Montserrat
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+New Brunswick
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+New Caledonia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+New South Wales
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Newfoundland and Labrador
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Ningxia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Northern Territory
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Northwest Territories
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Nova Scotia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Nunavut
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Ontario
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Prince Edward Island
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Qinghai
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Quebec
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Queensland
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Repatriated Travellers
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Reunion
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Saint Barthelemy
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Saint Helena, Ascension and Tristan da Cunha
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Saint Pierre and Miquelon
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Saskatchewan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Shaanxi
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Shandong
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Shanghai
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Shanxi
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Sichuan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Sint Maarten
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+South Australia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+St Martin
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Tasmania
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Tianjin
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Tibet
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Turks and Caicos Islands
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Victoria
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Wallis and Futuna
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Western Australia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Xinjiang
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Yukon
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Yunnan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Zhejiang
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+``` r
 ### SUBSETTING
 
 # Subset Canadian provinces from total cumulative global cases data.
@@ -130,17 +1529,605 @@ Covid_Canada <- subset(COVID_Global_Long_Date, `Country/Region` == "Canada")
 
 # Subset Canadian provinces from total cumulative global deaths data.
 Covid_Canada_Deaths <- subset(COVID_Global_Deaths_Long_Date, `Country/Region` == "Canada")
+```
 
+``` r
+kable(table(Covid_Canada$`Province/State`))  %>%
+  kable_styling("striped") %>%
+  scroll_box(width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+Var1
+
+</th>
+
+<th style="text-align:right;">
+
+Freq
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alberta
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+British Columbia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Diamond Princess
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Grand Princess
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Manitoba
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+New Brunswick
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Newfoundland and Labrador
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Northwest Territories
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Nova Scotia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Nunavut
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Ontario
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Prince Edward Island
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Quebec
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Repatriated Travellers
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Saskatchewan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Yukon
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+``` r
 ### FILTERING
 
 # For province data, I'm not immediately interested in Canadian Territories, so I'll filter those out.
-Covid_Canada_Filter <- Covid_Canada %>% dplyr::filter(
-  `Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
+Covid_Canada_Filter <- Covid_Canada %>% dplyr::filter(`Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
 
 # For province data, I'm not immediately interested in Canadian Territories, so I'll filter those out.
-Covid_Canada_Deaths_Filter <- Covid_Canada_Deaths %>% dplyr::filter(
-  `Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
+Covid_Canada_Deaths_Filter <- Covid_Canada_Deaths %>% dplyr::filter(`Province/State` %in% c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador"))
 ```
+
+``` r
+kable(table(Covid_Canada$`Province/State`)) %>%
+  kable_styling("striped") %>%
+  scroll_box(width = "100%")
+```
+
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+Var1
+
+</th>
+
+<th style="text-align:right;">
+
+Freq
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alberta
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+British Columbia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Diamond Princess
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Grand Princess
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Manitoba
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+New Brunswick
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Newfoundland and Labrador
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Northwest Territories
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Nova Scotia
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Nunavut
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Ontario
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Prince Edward Island
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Quebec
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Repatriated Travellers
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Saskatchewan
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Yukon
+
+</td>
+
+<td style="text-align:right;">
+
+434
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
 
 Let’s also filter dates earlier than March 1st 2020, and convert the
 dates column to a dates dataframe object.
@@ -267,7 +2254,7 @@ Total_Cases <- ggplot(COVID_Canada_Final, aes(x = Date, y = Cases_Per100000, col
 Total_Cases
 ```
 
-![](COVID_Canada_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](COVID_Canada_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 ggthemr_reset()
@@ -280,8 +2267,8 @@ ggthemr("flat")
 Total_Deaths <- ggplot(COVID_Canada_Final, aes(x = Date, y = Deaths_Per100000, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
   geom_area() +
   labs(x = "March 1st (2020) To Present",
-       y = "Cumulative Cases Per 100,000 People",
-       title = "Coronavirus Cases Per Canadian Province",
+       y = "Cumulative Deaths Per 100,000 People",
+       title = "Coronavirus Deaths Per Canadian Province",
        caption = "Data source: Government of Canada") +
   scale_colour_ggthemr_d() +
   scale_x_date(date_breaks = '1 month',
@@ -296,7 +2283,7 @@ Total_Deaths <- ggplot(COVID_Canada_Final, aes(x = Date, y = Deaths_Per100000, c
 Total_Deaths
 ```
 
-![](COVID_Canada_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](COVID_Canada_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 ggthemr_reset()
@@ -313,54 +2300,39 @@ Covid_Canada_Deaths_Graph$diff <- ave(Covid_Canada_Deaths_Graph$mean,Covid_Canad
 ggthemr("flat")
 # Total cases graph.
 Total_Cases_Hist <- ggplot(COVID_Canada_Final, aes(x = Date, y = DailyCases, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
-  #geom_area() +
   geom_bar(stat = "identity") +
-  facet_wrap(~`Province/State`) +
-  #theme_fivethirtyeight()+
-  #theme_solarized() +
-  #theme_tufte() +
-  #theme_economist() + scale_fill_economist()+
-  ylab("New Daily Cases") +
-  xlab("March 1st To Present") +
+  facet_wrap(~`Province/State`, nrow = 2, ncol = 4) +
+  ylab("Cases Per Day") +
+  xlab("March 1st (2020) To Present") +
   ggtitle("Daily Coronavirus Cases Per Canadian Province")+
   scale_colour_ggthemr_d() +
   scale_x_date(name = 'April 2020 to present', date_breaks = '1 month',
         date_labels = '%B') +
   theme(axis.text.x = element_text(face = "bold", 
                            size = 8, angle = 45, hjust = 1)) +
-  #scale_colour_brewer(type = "seq", palette = "Spectral") +
   gghighlight()
 
 Total_Cases_Hist
 ```
 
-![](COVID_Canada_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](COVID_Canada_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
-#ggthemr("dust")
-#ggthemr("light")
 ggthemr("flat")
-# Total cases graph.
 Total_Cases_Hist <- ggplot(COVID_Canada_Final, aes(x = Date, y = DailyDeaths, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
-  #geom_area()+
   geom_bar(stat = "identity") +
-  facet_wrap(~`Province/State`) +
-  #theme_fivethirtyeight()+
-  #theme_solarized() +
-  #theme_tufte() +
-  #theme_economist() + scale_fill_economist()+
-  ylab("New Daily Cases") +
-  xlab("March 1st To Present") +
-  ggtitle("Daily Coronavirus Cases Per Canadian Province")+
+  facet_wrap(~`Province/State`, nrow = 2, ncol = 4) +
+  ylab("Deaths Per Day") +
+  xlab("March 1st (2020) To Present") +
+  ggtitle("Daily Coronavirus Deaths Per Canadian Province")+
   scale_colour_ggthemr_d() +
   scale_x_date(name = 'April 2020 to present', date_breaks = '1 month',
         date_labels = '%B') +
   theme(axis.text.x = element_text(face = "bold", 
                            size = 8, angle = 45, hjust = 1)) +
-  #scale_colour_brewer(type = "seq", palette = "Spectral") +
   gghighlight()
 
 Total_Cases_Hist
 ```
 
-![](COVID_Canada_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](COVID_Canada_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
