@@ -32,8 +32,7 @@ library(gghighlight)
 library(plyr)
 library(ggthemr)
 library(ggpubr)
-library(MASS)
-library(caret)
+library(broom)
 ```
 
 <br/>
@@ -398,11 +397,12 @@ display just the total deaths per province.
 ggthemr("flat")
 
 # average data in dataframe for graphing.
-a <- Covid_Canada %>%
+Covid_Canada %>%
   ddply(c("`Province/State`"), summarise,
         cases = sum(DailyCases),
         deaths = sum(DailyDeaths)) %>%
   gather(Category, Number, cases:deaths) %>%
+  
   # Graph total cases and deaths per province, tilt sideways, stack cases/deaths, display cases count on x-axis/death count above each bar.
   ggplot(aes(x = reorder(`Province/State`, Number), y = Number, fill = factor(Category, levels = c("deaths", "cases")))) +
   geom_bar(stat = "identity") + 
@@ -410,14 +410,13 @@ a <- Covid_Canada %>%
   scale_y_continuous(labels = function(x) format(x, scientific = FALSE))  +
   labs(x = "Province",
        y = "COVID-19 Cases And Deaths",
-       title = "Total COVID-19 Cases In Canada",
-       caption = "Data source: Government of Canada",
+       title = "Total COVID-19 Cases in Canada",
+       caption = c("Data source: Government of Canada", paste0("Date: ", tail(format(Covid_Canada$date, "%B %d %y"), n = 1))),
        fill = "Case Type") +
+  theme(plot.caption = element_text(hjust=c(0, 1))) +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_text(aes(label = ifelse(Category=="deaths", Number,"")), position = position_stack(vjust=1.1), hjust = -.2, color = "blue") +
   coord_flip()
-
-a
 ```
 
 ![](COVID_Canada_files/figure-gfm/bar%20graph-1.png)<!-- -->
@@ -429,10 +428,11 @@ ggthemr("flat")
 Covid_Canada %>% 
   ggplot(aes(x = date, y = Cases_Per100000, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
   geom_area() +
-  labs(x = "March 1st (2020) To Present",
+  labs(x = paste0(head(format(Covid_Canada$date, "%B %d %y"), n = 1)," to Present"),
        y = "Cumulative Cases Per 100,000 People",
        title = "Coronavirus Cases Per Canadian Province",
-       caption = "Data source: Government of Canada") +
+       caption = c("Data source: Government of Canada", paste0("Today's Date: ", tail(format(Covid_Canada$date, "%B %d %y"), n = 1)))) +
+  theme(plot.caption = element_text(hjust=c(0, 1))) +
   scale_colour_ggthemr_d() +
   scale_x_date(date_breaks = '1 month',
         date_labels = '%B') +
@@ -1158,30 +1158,30 @@ COVID_Country_Graph <- function(country){
     
     }
   
-# Set Theme.
-ggthemr("flat")
+  # Set Theme.
+  ggthemr("flat")
 
-# average data in dataframe for graphing.
-a <- Covid %>%
-  ddply(c("`Country/Region`"), summarise,
-        cases = sum(DailyCases),
-        deaths = sum(DailyDeaths)) %>%
-  gather(Category, Number, cases:deaths) %>%
+  # average data in dataframe for graphing.
+  a <- Covid %>%
+    ddply(c("`Country/Region`"), summarise,
+          cases = sum(DailyCases),
+          deaths = sum(DailyDeaths)) %>%
+    gather(Category, Number, cases:deaths) %>%
+    
+    # Graph total cases and deaths per province, tilt sideways, stack cases/deaths, display cases count on x-axis/death count above each bar.
+    ggplot(aes(x = `Country/Region`, y = Number, fill = factor(Category, levels = c("deaths", "cases")))) +
+    geom_bar(stat = "identity", position = "dodge") + 
+    scale_colour_ggthemr_d() +
+    scale_y_continuous(labels = function(x) format(x, scientific = FALSE))  +
+    labs(x = "Country",
+         y = "COVID-19 Cases And Deaths",
+         title = paste0("Total COVID-19 Cases In ", country),
+         caption = paste0("Data source: Government of ", country),
+         fill = "Case Type") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    geom_text(aes(label = Number), position = position_dodge(width=0.9), vjust = -.2)
   
-  # Graph total cases and deaths per province, tilt sideways, stack cases/deaths, display cases count on x-axis/death count above each bar.
-  ggplot(aes(x = `Country/Region`, y = Number, fill = factor(Category, levels = c("deaths", "cases")))) +
-  geom_bar(stat = "identity", position = "dodge") + 
-  scale_colour_ggthemr_d() +
-  scale_y_continuous(labels = function(x) format(x, scientific = FALSE))  +
-  labs(x = "Country",
-       y = "COVID-19 Cases And Deaths",
-       title = paste0("Total COVID-19 Cases In ", country),
-       caption = paste0("Data source: Government of ", country),
-       fill = "Case Type") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  geom_text(aes(label = Number), position = position_dodge(width=0.9), vjust = -.2)
-
-return(a)
+  return(a)
   
 }
 ```
