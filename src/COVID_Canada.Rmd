@@ -284,7 +284,7 @@ I want to first see the total cases/deaths in each province. I decided to make a
 ggthemr("flat")
 
 # average data in dataframe for graphing.
-Covid_Canada %>%
+a <- Covid_Canada %>%
   ddply(c("`Province/State`"), summarise,
         cases = sum(DailyCases),
         deaths = sum(DailyDeaths)) %>%
@@ -303,6 +303,7 @@ Covid_Canada %>%
   geom_text(aes(label = ifelse(Category=="deaths", Number,"")), position = position_stack(vjust=1.1), hjust = -.2, color = "blue") +
   coord_flip()
 
+a
 ```
 
 ```{r per capita cases graph, fig.height=5, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
