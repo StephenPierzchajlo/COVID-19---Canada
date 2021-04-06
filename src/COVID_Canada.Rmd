@@ -2,7 +2,7 @@
 title: "COVID-19 Canadian data: pre-processing, visualizations, and modelling"
 author: "Stephen Pierzchajlo"
 output: github_document
-always_allow_html: true
+#always_allow_html: true
 
 ---
 
