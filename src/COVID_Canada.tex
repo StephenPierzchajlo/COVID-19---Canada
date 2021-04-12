@@ -1,0 +1,1523 @@
+\documentclass[]{tufte-handout}
+
+% ams
+\usepackage{amssymb,amsmath}
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \makeatletter
+  \@ifpackageloaded{fontspec}{}{\usepackage{fontspec}}
+  \makeatother
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \makeatletter
+  \@ifpackageloaded{soul}{
+     \renewcommand\allcapsspacing[1]{{\addfontfeature{LetterSpace=15}#1}}
+     \renewcommand\smallcapsspacing[1]{{\addfontfeature{LetterSpace=10}#1}}
+   }{}
+  \makeatother
+
+\fi
+
+% graphix
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+
+% booktabs
+\usepackage{booktabs}
+
+% url
+\usepackage{url}
+
+% hyperref
+\usepackage{hyperref}
+
+% units.
+\usepackage{units}
+
+
+\setcounter{secnumdepth}{-1}
+
+% citations
+
+
+% pandoc syntax highlighting
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+
+% longtable
+
+% multiplecol
+\usepackage{multicol}
+
+% strikeout
+\usepackage[normalem]{ulem}
+
+% morefloats
+\usepackage{morefloats}
+
+
+% tightlist macro required by pandoc >= 1.14
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% title / author / date
+\title{COVID-19 Canadian data: pre-processing, visualizations, and modelling}
+\author{Stephen Pierzchajlo}
+\date{}
+
+
+\begin{document}
+
+\maketitle
+
+
+
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+I have used R for a few years now, and every project I am currently
+working on has a completed R script already made. Therefore, it didn't
+make sense to me to just redo my analyses. I decided I wanted to do
+something new for this course, and do something I had never done before.
+One aspect of programming that I never was comfortable with was writing
+functions. So the ultimate goal of this project is to write functions
+that will perform an entire analysis in an interesting way, while still
+staying within the parameters of the assignment.
+
+\hypertarget{my-project-idea}{%
+\subsection{My Project Idea}\label{my-project-idea}}
+
+Many months ago I analysed data for a paper on COVID-19. The paper is
+currently under review, but all analyses, data, and scripts can be found
+here: \url{https://osf.io/c8zhn/}. Part of my work involved getting
+COVID-19 infection rate data for 4 specific weeks in March/April to use
+as a random effects parameter in a multiple regression model. The
+specific COVID-19 repository I found gets updated daily and contains
+data for every country (and every sub-region in that country) in the
+world. I thought it would be interesting to create a set of functions
+that could analyse any country the user chooses in a variety of ways,
+and output COVID-19 related statistics and visualisations of infection
+trends. So that is my goal.
+
+In this project, I will first analyse COVID-19 data for 1 country in
+great detail, and then ultimately automate these analyses with a number
+of functions that generalise across any country the user wants. Because
+I am Canadian, I decided to first analyse Canadian COVID-19 data in as
+much detail as possible. This will include downloading the data from a
+specific source, wrangling it into a condensed dataframe, graphing the
+data in various ways, and even doing some basic modelling to predict
+future infection rates.
+
+\hypertarget{load-libraries}{%
+\subsection{Load Libraries}\label{load-libraries}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load libraries}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(gghighlight)}
+\KeywordTok{library}\NormalTok{(plyr)}
+\KeywordTok{library}\NormalTok{(ggthemr)}
+\KeywordTok{library}\NormalTok{(ggpubr)}
+\KeywordTok{library}\NormalTok{(broom)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{finding-a-covid-19-repository}{%
+\subsection{Finding a COVID-19
+Repository}\label{finding-a-covid-19-repository}}
+
+Their are different COVID-19 data repositories, and I am using two files
+that contains COVID-19 data for every country in the world. File 1
+contains data about total worldwide cases and file 2 contains data about
+total worldwide deaths. Each time the code chunk below is run, it grabs
+each \emph{.csv} file from a github repository that has been updated
+within the past 24 hours. This is ideal, because it means that anytime I
+run this script, I have COVID-19 statistics that are as recent as
+yesterday. I prefer this approach to downloading a static \emph{.csv}
+file because COVID-19 cases and deaths are ongoing and constantly
+changing.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Here, we load .csv files from github. These are updated daily, so everytime this analysis is run, it uses the most up to date information.}
+
+\CommentTok{# Total Global Cases Data}
+\NormalTok{COVID_Global_Wide<-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"}\NormalTok{))}
+
+\CommentTok{# Total Global Deaths Data}
+\NormalTok{COVID_Global_Deaths_Wide <-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{quick-look-at-raw-data}{%
+\subsection{Quick Look at Raw Data}\label{quick-look-at-raw-data}}
+
+First I'll look at the overall shape of one of these dataframes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Print number of rows and columns.}
+\KeywordTok{cat}\NormalTok{(}\StringTok{" There are"}\NormalTok{, }\KeywordTok{nrow}\NormalTok{(COVID_Global_Wide), }\StringTok{"rows in this dataframe.}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,}\StringTok{"There are"}\NormalTok{, }\KeywordTok{ncol}\NormalTok{(COVID_Global_Wide), }\StringTok{"columns in this dataframe."}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  There are 274 rows in this dataframe.
+##  There are 445 columns in this dataframe.
+\end{verbatim}
+
+There are a massive number of columns. Why is that? I decided to take a
+look at the overall structure.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Display first 10 rows and all columns.}
+\NormalTok{COVID_Global_Wide[}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10 x 445
+##    `Province/State`  `Country/Region`   Lat   Long `1/22/20` `1/23/20` `1/24/20`
+##    <chr>             <chr>            <dbl>  <dbl>     <dbl>     <dbl>     <dbl>
+##  1 <NA>              Afghanistan       33.9  67.7          0         0         0
+##  2 <NA>              Albania           41.2  20.2          0         0         0
+##  3 <NA>              Algeria           28.0   1.66         0         0         0
+##  4 <NA>              Andorra           42.5   1.52         0         0         0
+##  5 <NA>              Angola           -11.2  17.9          0         0         0
+##  6 <NA>              Antigua and Bar~  17.1 -61.8          0         0         0
+##  7 <NA>              Argentina        -38.4 -63.6          0         0         0
+##  8 <NA>              Armenia           40.1  45.0          0         0         0
+##  9 Australian Capit~ Australia        -35.5 149.           0         0         0
+## 10 New South Wales   Australia        -33.9 151.           0         0         0
+## # ... with 438 more variables: 1/25/20 <dbl>, 1/26/20 <dbl>, 1/27/20 <dbl>,
+## #   1/28/20 <dbl>, 1/29/20 <dbl>, 1/30/20 <dbl>, 1/31/20 <dbl>, 2/1/20 <dbl>,
+## #   2/2/20 <dbl>, 2/3/20 <dbl>, 2/4/20 <dbl>, 2/5/20 <dbl>, 2/6/20 <dbl>,
+## #   2/7/20 <dbl>, 2/8/20 <dbl>, 2/9/20 <dbl>, 2/10/20 <dbl>, 2/11/20 <dbl>,
+## #   2/12/20 <dbl>, 2/13/20 <dbl>, 2/14/20 <dbl>, 2/15/20 <dbl>, 2/16/20 <dbl>,
+## #   2/17/20 <dbl>, 2/18/20 <dbl>, 2/19/20 <dbl>, 2/20/20 <dbl>, 2/21/20 <dbl>,
+## #   2/22/20 <dbl>, 2/23/20 <dbl>, 2/24/20 <dbl>, 2/25/20 <dbl>, 2/26/20 <dbl>,
+## #   2/27/20 <dbl>, 2/28/20 <dbl>, 2/29/20 <dbl>, 3/1/20 <dbl>, 3/2/20 <dbl>,
+## #   3/3/20 <dbl>, 3/4/20 <dbl>, 3/5/20 <dbl>, 3/6/20 <dbl>, 3/7/20 <dbl>,
+## #   3/8/20 <dbl>, 3/9/20 <dbl>, 3/10/20 <dbl>, 3/11/20 <dbl>, 3/12/20 <dbl>,
+## #   3/13/20 <dbl>, 3/14/20 <dbl>, 3/15/20 <dbl>, 3/16/20 <dbl>, 3/17/20 <dbl>,
+## #   3/18/20 <dbl>, 3/19/20 <dbl>, 3/20/20 <dbl>, 3/21/20 <dbl>, 3/22/20 <dbl>,
+## #   3/23/20 <dbl>, 3/24/20 <dbl>, 3/25/20 <dbl>, 3/26/20 <dbl>, 3/27/20 <dbl>,
+## #   3/28/20 <dbl>, 3/29/20 <dbl>, 3/30/20 <dbl>, 3/31/20 <dbl>, 4/1/20 <dbl>,
+## #   4/2/20 <dbl>, 4/3/20 <dbl>, 4/4/20 <dbl>, 4/5/20 <dbl>, 4/6/20 <dbl>,
+## #   4/7/20 <dbl>, 4/8/20 <dbl>, 4/9/20 <dbl>, 4/10/20 <dbl>, 4/11/20 <dbl>,
+## #   4/12/20 <dbl>, 4/13/20 <dbl>, 4/14/20 <dbl>, 4/15/20 <dbl>, 4/16/20 <dbl>,
+## #   4/17/20 <dbl>, 4/18/20 <dbl>, 4/19/20 <dbl>, 4/20/20 <dbl>, 4/21/20 <dbl>,
+## #   4/22/20 <dbl>, 4/23/20 <dbl>, 4/24/20 <dbl>, 4/25/20 <dbl>, 4/26/20 <dbl>,
+## #   4/27/20 <dbl>, 4/28/20 <dbl>, 4/29/20 <dbl>, 4/30/20 <dbl>, 5/1/20 <dbl>,
+## #   5/2/20 <dbl>, 5/3/20 <dbl>, ...
+\end{verbatim}
+
+As seen above, the \emph{.csv} file has been arranged such that each
+column is a date (ignoring the first 4 columns), with values in a column
+corresponding to the total cases/deaths up until that date. This format
+is not easy to work with, and it means a new column will appear every
+day. After 1 week this dataframe will have 7 more columns.
+
+\hypertarget{reshaping-dataframes}{%
+\subsection{Reshaping Dataframes}\label{reshaping-dataframes}}
+
+To make the data easier to work with, I will create one column called
+``date'' where each row is a date. In a column beside it, I will have
+the total cases/deaths for that date. Now instead of 100s of columns
+that contain dates, we only have one column.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Total global cases data in long format.}
+\NormalTok{COVID_Global_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# Total global deaths data in long format}
+\NormalTok{COVID_Global_Deaths_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Deaths_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Deaths_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+
+\CommentTok{# Take a look at several of the first rows.}
+\KeywordTok{head}\NormalTok{(COVID_Global_Long_Date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 6
+##   `Province/State` `Country/Region`      Lat   Long date    cases
+##   <chr>            <chr>               <dbl>  <dbl> <fct>   <dbl>
+## 1 <NA>             Afghanistan          33.9  67.7  1/22/20     0
+## 2 <NA>             Albania              41.2  20.2  1/22/20     0
+## 3 <NA>             Algeria              28.0   1.66 1/22/20     0
+## 4 <NA>             Andorra              42.5   1.52 1/22/20     0
+## 5 <NA>             Angola              -11.2  17.9  1/22/20     0
+## 6 <NA>             Antigua and Barbuda  17.1 -61.8  1/22/20     0
+\end{verbatim}
+
+\hypertarget{combining-dataframes}{%
+\subsection{Combining Dataframes}\label{combining-dataframes}}
+
+Since both dataframes come from the same source, they might have the
+same structure. If so, we could just attach the deaths column from the
+second dataframe to the first dataframe. Below we loop through both
+dataframe, and for each column check how many rows have matching
+information in the same position, and how many have non-matching
+information. We do this for all pairs of columns except for the
+cases/deaths (since those should be different). If there are any
+differences, we should get some false statments below. If there are no
+differences, we should have a single count that says ``true''.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Check whether the cases and deaths dataframes have exactly the same information per row (except actual cases/deaths).}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \KeywordTok{length}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(COVID_Global_Long_Date)) }\OperatorTok{-}\StringTok{ }\DecValTok{2}\NormalTok{)\{}
+  
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{table}\NormalTok{(COVID_Global_Long_Date[[i]] }\OperatorTok{==}\StringTok{ }\NormalTok{COVID_Global_Deaths_Long_Date[[i]]))}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   TRUE 
+## 120393
+\end{verbatim}
+
+Everything matches, so I'm going to add the cases column from the deaths
+dataframe to the cases dataframe. Additionally, I'll call this new
+column ``deaths'':
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Combine death count to cases dataframe.}
+\NormalTok{COVID_Global_Long_Date}\OperatorTok{$}\NormalTok{deaths <-}\StringTok{ }\NormalTok{COVID_Global_Deaths_Long_Date}\OperatorTok{$}\NormalTok{cases}
+\end{Highlighting}
+\end{Shaded}
+
+Now, I can quickly check the dataframe to see how it looks.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# See first few rows.}
+\KeywordTok{head}\NormalTok{(COVID_Global_Long_Date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 7
+##   `Province/State` `Country/Region`      Lat   Long date    cases deaths
+##   <chr>            <chr>               <dbl>  <dbl> <fct>   <dbl>  <dbl>
+## 1 <NA>             Afghanistan          33.9  67.7  1/22/20     0      0
+## 2 <NA>             Albania              41.2  20.2  1/22/20     0      0
+## 3 <NA>             Algeria              28.0   1.66 1/22/20     0      0
+## 4 <NA>             Andorra              42.5   1.52 1/22/20     0      0
+## 5 <NA>             Angola              -11.2  17.9  1/22/20     0      0
+## 6 <NA>             Antigua and Barbuda  17.1 -61.8  1/22/20     0      0
+\end{verbatim}
+
+\hypertarget{filtering-provinces}{%
+\subsection{Filtering Provinces}\label{filtering-provinces}}
+
+Because I only want data from Canada, I need to filter out every other
+country.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Subset Canadian provinces from total cumulative global cases data.}
+\NormalTok{Covid_Canada <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(COVID_Global_Long_Date, }\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`} \OperatorTok{==}\StringTok{ "Canada"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+I can then check how many provinces I have in the filtered dataframe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# See how many provinces are in the dataset.}
+\KeywordTok{unique}\NormalTok{(Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "Alberta"                   "British Columbia"         
+##  [3] "Diamond Princess"          "Grand Princess"           
+##  [5] "Manitoba"                  "New Brunswick"            
+##  [7] "Newfoundland and Labrador" "Northwest Territories"    
+##  [9] "Nova Scotia"               "Nunavut"                  
+## [11] "Ontario"                   "Prince Edward Island"     
+## [13] "Quebec"                    "Repatriated Travellers"   
+## [15] "Saskatchewan"              "Yukon"
+\end{verbatim}
+
+Now, their are only 16 provinces, covering every Canadian province.
+However, I only want to focus on the most populated provinces (many
+territories have extremely small populations). Therefore, I will focus
+on the 8 largest provinces, which will be subsetted below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# List of Provinces.}
+\NormalTok{Province_List <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Ontario"}\NormalTok{, }\StringTok{"Quebec"}\NormalTok{, }\StringTok{"New Brunswick"}\NormalTok{, }\StringTok{"Manitoba"}\NormalTok{, }\StringTok{"British Columbia"}\NormalTok{, }\StringTok{"Saskatchewan"}\NormalTok{, }\StringTok{"Alberta"}\NormalTok{, }\StringTok{"Newfoundland and Labrador"}\NormalTok{)}
+
+\CommentTok{# For province data, I'm not immediately interested in Canadian Territories, so I'll filter those out.}
+\NormalTok{Covid_Canada <-}\StringTok{ }\NormalTok{Covid_Canada }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{%in%}\StringTok{ }\NormalTok{Province_List)}
+\end{Highlighting}
+\end{Shaded}
+
+Now I can double-check the number of provinces in my further filtered
+dataframe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# See how many provinces are in the dataset.}
+\KeywordTok{unique}\NormalTok{(Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Alberta"                   "British Columbia"         
+## [3] "Manitoba"                  "New Brunswick"            
+## [5] "Newfoundland and Labrador" "Ontario"                  
+## [7] "Quebec"                    "Saskatchewan"
+\end{verbatim}
+
+Looks good!
+
+I also want to filter out dates earlier than March 1st 2020.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Filter canadian provincial data to only include data starting from March 1st.}
+\NormalTok{Covid_Canada <-}\StringTok{ }\NormalTok{Covid_Canada[}\DecValTok{352}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(Covid_Canada), ]}
+
+\CommentTok{# Check first row of date column,}
+\NormalTok{Covid_Canada[}\DecValTok{1}\NormalTok{,}\DecValTok{5}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 1
+##   date  
+##   <fct> 
+## 1 3/5/20
+\end{verbatim}
+
+It appears now that the dataframe starts around the first of march. My
+filtering wasn't exact, but I think it's good enough.
+
+\hypertarget{converting-date-variable-to-date-object.}{%
+\subsection{Converting Date Variable to Date
+Object.}\label{converting-date-variable-to-date-object.}}
+
+Looking at the data below\ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Check data structure.}
+\KeywordTok{str}\NormalTok{(Covid_Canada)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## tibble [3,177 x 7] (S3: tbl_df/tbl/data.frame)
+##  $ Province/State: chr [1:3177] "Saskatchewan" "Alberta" "British Columbia" "Manitoba" ...
+##  $ Country/Region: chr [1:3177] "Canada" "Canada" "Canada" "Canada" ...
+##  $ Lat           : num [1:3177] 52.9 53.9 53.7 53.8 46.6 ...
+##  $ Long          : num [1:3177] -106.5 -116.6 -127.6 -98.8 -66.5 ...
+##  $ date          : Factor w/ 441 levels "1/22/20","1/23/20",..: 44 45 45 45 45 45 45 45 45 46 ...
+##  $ cases         : num [1:3177] 0 1 21 0 0 0 25 2 0 2 ...
+##  $ deaths        : num [1:3177] 0 0 0 0 0 0 0 0 0 0 ...
+\end{verbatim}
+
+\ldots the date object is a Factor. However, I want it to be a date
+object instead. Below I do just that.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Convert date column to date format for cases dataframe.}
+\NormalTok{Covid_Canada}\OperatorTok{$}\NormalTok{date <-}\StringTok{ }\KeywordTok{as.Date}\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{date, }\DataTypeTok{format =} \StringTok{"%m/%d/%Y"}\NormalTok{)}
+
+\CommentTok{# Display date variable type.}
+\KeywordTok{str}\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  Date[1:3177], format: "0020-03-05" "0020-03-06" "0020-03-06" "0020-03-06" "0020-03-06" ...
+\end{verbatim}
+
+Now we can see how the dates are formatted as actual dates.
+
+I also don't need the Country/Region, Lat, or Long data, so I'm going to
+get rid of it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Take only a subset of columns.}
+\NormalTok{Covid_Canada <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(Covid_Canada, }\DataTypeTok{select =} \KeywordTok{c}\NormalTok{(}\StringTok{"Province/State"}\NormalTok{, }\StringTok{"date"}\NormalTok{, }\StringTok{"cases"}\NormalTok{, }\StringTok{"deaths"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+The cases and deaths are cumulative, so each row tells us how many total
+cases there have been up to that date. If I want cases per day, I need
+to add new columns. Below I make two new columns that only have
+cases/deaths for that day. To do that I take a value from one row, and
+subtract it from the previous row.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate cases per day by subtracting current count in each row by total cases up until that point.}
+\NormalTok{Covid_Canada}\OperatorTok{$}\NormalTok{DailyCases <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases,Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+
+\CommentTok{# Calculate deaths per day by subtracting current count in each row by total deaths up until that point.}
+\NormalTok{Covid_Canada}\OperatorTok{$}\NormalTok{DailyDeaths <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths,Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{per-capita-correction}{%
+\subsection{Per Capita Correction}\label{per-capita-correction}}
+
+Because I am comparing provinces, absolute cases/deaths will be
+misleading since different provinces have different population sizes. I
+am going to add a new column using case\_when, that gives cases/deaths
+per 100,000 people. I had to look up the population for each province,
+and then I divided cases/deaths in each province by the province's
+population, and multiplied it by 100,000.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate total cases in each province per 100,000 people.}
+\NormalTok{Covid_Canada}\OperatorTok{$}\NormalTok{Cases_Per100000 <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{case_when}\NormalTok{(Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Alberta"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{4345737}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                     Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "British Columbia"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{5020302}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                     Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Manitoba"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{1360396}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                     Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "New Brunswick"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{772094}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                     Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Newfoundland and Labrador"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{523790}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                     Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Ontario"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{14446515}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                     Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Quebec"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{8433301}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                     Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Saskatchewan"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{cases}\OperatorTok{/}\DecValTok{1168423}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Calculate total deaths in each province per 100,000 people.}
+\NormalTok{Covid_Canada}\OperatorTok{$}\NormalTok{Deaths_Per100000 <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{case_when}\NormalTok{(Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Alberta"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{4345737}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                      Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "British Columbia"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{5020302}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{, }
+\NormalTok{                                                      Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Manitoba"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{1360396}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                      Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "New Brunswick"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{772094}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                      Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Newfoundland and Labrador"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{523790}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                      Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Ontario"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{14446515}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                      Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Quebec"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{8433301}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{,}
+\NormalTok{                                                      Covid_Canada}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`} \OperatorTok{==}\StringTok{ "Saskatchewan"} \OperatorTok{~}\StringTok{ }\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{deaths}\OperatorTok{/}\DecValTok{1168423}\NormalTok{) }\OperatorTok{*}\StringTok{ }\DecValTok{100000}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{graphs}{%
+\section{Graphs}\label{graphs}}
+
+\hypertarget{total-casesdeaths-in-each-province.}{%
+\subsection{Total cases/deaths in each
+province.}\label{total-casesdeaths-in-each-province.}}
+
+I want to first see the total cases/deaths in each province. I decided
+to make a stacked bar graph where each bar represents total cases in a
+province. Each bar is seperated by the proportion of cases to deaths.
+The x-axis displays total cases, and I put text beside each bar to
+display just the total deaths per province.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Set Theme.}
+\KeywordTok{ggthemr}\NormalTok{(}\StringTok{"flat"}\NormalTok{)}
+
+\CommentTok{# average data in dataframe for graphing.}
+\NormalTok{Covid_Canada }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ddply}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"`Province/State`"}\NormalTok{), summarise,}
+        \DataTypeTok{cases =} \KeywordTok{sum}\NormalTok{(DailyCases),}
+        \DataTypeTok{deaths =} \KeywordTok{sum}\NormalTok{(DailyDeaths)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{(Category, Number, cases}\OperatorTok{:}\NormalTok{deaths) }\OperatorTok{%>%}
+\StringTok{  }
+\StringTok{  }\CommentTok{# Graph total cases and deaths per province, tilt sideways, stack cases/deaths, display cases count on x-axis/death count above each bar.}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{reorder}\NormalTok{(}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, Number), }\DataTypeTok{y =}\NormalTok{ Number, }\DataTypeTok{fill =} \KeywordTok{factor}\NormalTok{(Category, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{"deaths"}\NormalTok{, }\StringTok{"cases"}\NormalTok{)))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_colour_ggthemr_d}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{labels =} \ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{format}\NormalTok{(x, }\DataTypeTok{scientific =} \OtherTok{FALSE}\NormalTok{))  }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Province"}\NormalTok{,}
+       \DataTypeTok{y =} \StringTok{"COVID-19 Cases And Deaths"}\NormalTok{,}
+       \DataTypeTok{title =} \StringTok{"Total COVID-19 Cases in Canada"}\NormalTok{,}
+       \DataTypeTok{caption =} \KeywordTok{c}\NormalTok{(}\StringTok{"Data source: Government of Canada"}\NormalTok{, }\KeywordTok{paste0}\NormalTok{(}\StringTok{"Date: "}\NormalTok{, }\KeywordTok{tail}\NormalTok{(}\KeywordTok{format}\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{date, }\StringTok{"%B %d %y"}\NormalTok{), }\DataTypeTok{n =} \DecValTok{1}\NormalTok{))),}
+       \DataTypeTok{fill =} \StringTok{"Case Type"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{plot.caption =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_text}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{label =} \KeywordTok{ifelse}\NormalTok{(Category}\OperatorTok{==}\StringTok{"deaths"}\NormalTok{, Number,}\StringTok{""}\NormalTok{)), }\DataTypeTok{position =} \KeywordTok{position_stack}\NormalTok{(}\DataTypeTok{vjust=}\FloatTok{1.1}\NormalTok{), }\DataTypeTok{hjust =} \FloatTok{-.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"blue"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_flip}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/bar graph-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Set Theme.}
+\KeywordTok{ggthemr}\NormalTok{(}\StringTok{"flat"}\NormalTok{)}
+\CommentTok{# Cumulative Cases Graph.}
+\NormalTok{Covid_Canada }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ Cases_Per100000, }\DataTypeTok{color =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{group =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{fill =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_area}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{paste0}\NormalTok{(}\KeywordTok{head}\NormalTok{(}\KeywordTok{format}\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{date, }\StringTok{"%B %d %y"}\NormalTok{), }\DataTypeTok{n =} \DecValTok{1}\NormalTok{),}\StringTok{" to Present"}\NormalTok{),}
+       \DataTypeTok{y =} \StringTok{"Cumulative Cases Per 100,000 People"}\NormalTok{,}
+       \DataTypeTok{title =} \StringTok{"Coronavirus Cases Per Canadian Province"}\NormalTok{,}
+       \DataTypeTok{caption =} \KeywordTok{c}\NormalTok{(}\StringTok{"Data source: Government of Canada"}\NormalTok{, }\KeywordTok{paste0}\NormalTok{(}\StringTok{"Today's Date: "}\NormalTok{, }\KeywordTok{tail}\NormalTok{(}\KeywordTok{format}\NormalTok{(Covid_Canada}\OperatorTok{$}\NormalTok{date, }\StringTok{"%B %d %y"}\NormalTok{), }\DataTypeTok{n =} \DecValTok{1}\NormalTok{)))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{plot.caption =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_ggthemr_d}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_date}\NormalTok{(}\DataTypeTok{date_breaks =} \StringTok{'1 month'}\NormalTok{,}
+        \DataTypeTok{date_labels =} \StringTok{'%B'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{9}\NormalTok{, }\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{),}
+        \DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/per capita cases graph-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Set Theme.}
+\KeywordTok{ggthemr}\NormalTok{(}\StringTok{"flat"}\NormalTok{)}
+
+\CommentTok{#Cumulative Deaths Graph.}
+\NormalTok{Covid_Canada }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ Deaths_Per100000, }\DataTypeTok{color =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{group =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{fill =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_area}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"March 1st (2020) To Present"}\NormalTok{,}
+       \DataTypeTok{y =} \StringTok{"Cumulative Deaths Per 100,000 People"}\NormalTok{,}
+       \DataTypeTok{title =} \StringTok{"Coronavirus Deaths Per Canadian Province"}\NormalTok{,}
+       \DataTypeTok{caption =} \StringTok{"Data source: Government of Canada"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_ggthemr_d}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_date}\NormalTok{(}\DataTypeTok{date_breaks =} \StringTok{'1 month'}\NormalTok{, }\DataTypeTok{date_labels =} \StringTok{'%B'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{9}\NormalTok{, }\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{),}
+        \DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/per capita deaths graph-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Set Theme.}
+\KeywordTok{ggthemr}\NormalTok{(}\StringTok{"flat"}\NormalTok{)}
+
+\CommentTok{# Daily Cases Graph.}
+\NormalTok{Covid_Canada }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ DailyCases, }\DataTypeTok{color =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{group =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{fill =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y =} \StringTok{"Cases Per Day"}\NormalTok{,}
+       \DataTypeTok{title =} \StringTok{"Daily Coronavirus Cases Per Canadian Province"}\NormalTok{,}
+       \DataTypeTok{caption =} \StringTok{"Data source: Government of Canada"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_ggthemr_d}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_date}\NormalTok{(}\DataTypeTok{name =} \StringTok{'March 1st (2020) To Present'}\NormalTok{, }\DataTypeTok{date_breaks =} \StringTok{'1 month'}\NormalTok{, }\DataTypeTok{date_labels =} \StringTok{'%B'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{8}\NormalTok{, }\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{),}
+        \DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{gghighlight}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/daily cases graph-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Set Theme.}
+\KeywordTok{ggthemr}\NormalTok{(}\StringTok{"flat"}\NormalTok{)}
+
+\CommentTok{# Daily Deaths Graph.}
+\NormalTok{Covid_Canada }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ DailyDeaths, }\DataTypeTok{color =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{group =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{fill =} \StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{4}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y =} \StringTok{"Deaths Per Day"}\NormalTok{,}
+       \DataTypeTok{title =} \StringTok{"Daily Coronavirus Deaths Per Canadian Province"}\NormalTok{,}
+       \DataTypeTok{caption =} \StringTok{"Data source: Government of Canada"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_ggthemr_d}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_date}\NormalTok{(}\DataTypeTok{name =} \StringTok{'March 1st (2020) To Present'}\NormalTok{, }\DataTypeTok{date_breaks =} \StringTok{'1 month'}\NormalTok{, }\DataTypeTok{date_labels =} \StringTok{'%B'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{8}\NormalTok{, }\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{),}
+        \DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{gghighlight}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/daily deaths graph-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Reset Theme.}
+\KeywordTok{ggthemr_reset}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{modelling}{%
+\section{Modelling}\label{modelling}}
+
+Because the assignment calls for some sort of analysis, I decided to try
+some predictive modelling using this dataset. While this dataset lends
+itself much more to qualitative analysis, I have seen many COVID models
+where they try to predict future cases based on current trends. I have
+never done anything like that before, but I thought this might be a good
+way to learn.
+
+First, I Made a new dataframe for predictive modelling, since I will
+need to add future dates to it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Make modelling dataframe.}
+\NormalTok{Covid_Canada_Modelling <-}\StringTok{ }\NormalTok{Covid_Canada}
+\end{Highlighting}
+\end{Shaded}
+
+I also want to make a prediction model for all of Canada, so I am
+summarising by date so that each day averages over all cases/deaths for
+every province.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Average cases per day, for all provinces.}
+\NormalTok{Covid_Canada_dates <-}\StringTok{ }\NormalTok{Covid_Canada_Modelling }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ddply}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"date"}\NormalTok{), summarise,}
+        \DataTypeTok{cases =} \KeywordTok{mean}\NormalTok{(cases),}
+        \DataTypeTok{deaths =} \KeywordTok{mean}\NormalTok{(deaths),}
+        \DataTypeTok{DailyCases =} \KeywordTok{sum}\NormalTok{(DailyCases),}
+        \DataTypeTok{DailyDeaths =} \KeywordTok{sum}\NormalTok{(DailyDeaths))}
+\end{Highlighting}
+\end{Shaded}
+
+Most models that try to predict future COVID-19 cases use more
+complicated models with many parameters to account for things like
+lockdowns, mask compliance, etc. I don't have anything like that here,
+so I am only going to try and predict cases for the next 10 days.
+Therefore I need to add the next 20 days to the dates column, and leave
+all other columns blank.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# New dataframe that starts the final day of COVID data collection and adds 20 days. Also contains blank columns for other variables.}
+\NormalTok{New_Dates <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{date =}\KeywordTok{seq}\NormalTok{(}\KeywordTok{max}\NormalTok{(Covid_Canada_Modelling}\OperatorTok{$}\NormalTok{date),}\KeywordTok{max}\NormalTok{(Covid_Canada_Modelling}\OperatorTok{$}\NormalTok{date) }\OperatorTok{+}\StringTok{ }\DecValTok{10}\NormalTok{,}\DataTypeTok{by=}\StringTok{'days'}\NormalTok{),}
+                        \DataTypeTok{cases =} \OtherTok{NA}\NormalTok{,}
+                        \DataTypeTok{deaths =} \OtherTok{NA}\NormalTok{,}
+                        \DataTypeTok{DailyCases =} \OtherTok{NA}\NormalTok{,}
+                        \DataTypeTok{DailyDeaths =} \OtherTok{NA}\NormalTok{)}
+
+\CommentTok{# View future dates dataframe.}
+\NormalTok{New_Dates}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          date cases deaths DailyCases DailyDeaths
+## 1  0021-04-06    NA     NA         NA          NA
+## 2  0021-04-07    NA     NA         NA          NA
+## 3  0021-04-08    NA     NA         NA          NA
+## 4  0021-04-09    NA     NA         NA          NA
+## 5  0021-04-10    NA     NA         NA          NA
+## 6  0021-04-11    NA     NA         NA          NA
+## 7  0021-04-12    NA     NA         NA          NA
+## 8  0021-04-13    NA     NA         NA          NA
+## 9  0021-04-14    NA     NA         NA          NA
+## 10 0021-04-15    NA     NA         NA          NA
+## 11 0021-04-16    NA     NA         NA          NA
+\end{verbatim}
+
+We can see the dataframe just contains a column of future dates, and
+NA's for all other columns. This is so that we can add these dates to
+the modelling dataframe we already have. However, this dataframe also
+starts on the last day that we have COVID-19 data for, since I created
+the dates by starting with the last date on that dataframe. So I will
+just delete the first row.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Delete first row.}
+\NormalTok{New_Dates =}\StringTok{ }\NormalTok{New_Dates[}\OperatorTok{-}\DecValTok{1}\NormalTok{,]}
+
+\CommentTok{# Look at first few rows.}
+\KeywordTok{head}\NormalTok{(New_Dates)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         date cases deaths DailyCases DailyDeaths
+## 2 0021-04-07    NA     NA         NA          NA
+## 3 0021-04-08    NA     NA         NA          NA
+## 4 0021-04-09    NA     NA         NA          NA
+## 5 0021-04-10    NA     NA         NA          NA
+## 6 0021-04-11    NA     NA         NA          NA
+## 7 0021-04-12    NA     NA         NA          NA
+\end{verbatim}
+
+Now the datafrmae starts on the NEXT day.
+
+Next, I just added this dataframe to the modelling dataframe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Add future dates to end of modelling dataframe.}
+\NormalTok{Covid_Canada_dates <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(Covid_Canada_dates, New_Dates)}
+
+\CommentTok{# Look at last 15 rows of ammended dataframe.}
+\KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{15}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            date    cases   deaths DailyCases DailyDeaths
+## 394  0021-04-02 124472.4 2867.375       3650          13
+## 395  0021-04-03 125357.9 2870.750       7084          27
+## 396  0021-04-04 125796.0 2873.500       3505          22
+## 397  0021-04-05 126835.9 2876.375       8319          23
+## 398  0021-04-06 128175.4 2882.500      10716          49
+## 2100 0021-04-07       NA       NA         NA          NA
+## 399  0021-04-08       NA       NA         NA          NA
+## 410  0021-04-09       NA       NA         NA          NA
+## 510  0021-04-10       NA       NA         NA          NA
+## 610  0021-04-11       NA       NA         NA          NA
+## 710  0021-04-12       NA       NA         NA          NA
+## 810  0021-04-13       NA       NA         NA          NA
+## 910  0021-04-14       NA       NA         NA          NA
+## 1010 0021-04-15       NA       NA         NA          NA
+## 1110 0021-04-16       NA       NA         NA          NA
+\end{verbatim}
+
+Now the dataframe has contains future dates as well.
+
+Next comes defining the actual model. Unfortunately, I don't have any
+useful predictors, other than date. However, just using a date to
+predict the number of COVID-19 cases is probably severely lacking.
+Still, Using current infection trends for the past little while might be
+a good way to estimate very near future infection rates (like infections
+5 days from now). Thus, I am going to set up a model that only uses date
+to predict infections for the next 10 days.
+
+First, a very naive model. I use a single predictor (dates), and use
+data from the past 300 days estimate infections.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Somewhat naive linear model.}
+\NormalTok{model}\FloatTok{.1}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{300}\NormalTok{), cases }\OperatorTok{~}\StringTok{ }\NormalTok{date)}
+\end{Highlighting}
+\end{Shaded}
+
+I can then look at a summary of the coefficients I estmated for my
+model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Model Summary.}
+\NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(model}\FloatTok{.1}\NormalTok{, }\DataTypeTok{conf.int =}\NormalTok{ T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 7
+##   term          estimate  std.error statistic   p.value   conf.low  conf.high
+##   <chr>            <dbl>      <dbl>     <dbl>     <dbl>      <dbl>      <dbl>
+## 1 (Intercept) 317732235. 5803251.        54.8 2.82e-154 306310072. 329154398.
+## 2 date              446.       8.15      54.7 2.95e-154       430.       462.
+\end{verbatim}
+
+Coefficient Interpretation: For every 1 day increase, we would expect an
+additional 461 new COVID-19 cases.
+
+\hypertarget{prediction}{%
+\subsection{Prediction}\label{prediction}}
+
+We have our model, so now let's apply those coefficients to the new
+days. Since our model is: COVID cases = 328270900 + date*461, we can
+predict cases on all new days be simply applying each date to the linear
+equation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Predict COVID-19 infections with my model.}
+\NormalTok{Covid_Canada_dates}\OperatorTok{$}\NormalTok{New <-}\StringTok{  }\KeywordTok{predict}\NormalTok{(}\DataTypeTok{object =}\NormalTok{ model}\FloatTok{.1}\NormalTok{, }\DataTypeTok{newdata =}\NormalTok{ Covid_Canada_dates)}
+
+\CommentTok{# Look at predictions for future dates.}
+\KeywordTok{tail}\NormalTok{(Covid_Canada_dates}\OperatorTok{$}\NormalTok{New, }\DataTypeTok{n =} \DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] 117577.9 118024.1 118470.4 118916.6 119362.8 119809.1 120255.3 120701.6
+##  [9] 121147.8 121594.0
+\end{verbatim}
+
+Each value above represents predictions from our model for the next 10
+days. But how accurate are these predictions really?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Plot data and future predictions regression lne.}
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{300}\NormalTok{), }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ cases)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{color=}\StringTok{'blue'}\NormalTok{)  }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{color=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{300}\NormalTok{), }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{date, }\DataTypeTok{y=}\NormalTok{New))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/unnamed-chunk-9-1}
+
+The regression line extends beyond the data, so it's definitely
+predicting future infections. But, the model isn't a very good fit as
+the straight line doesn't fit the non-linear data very well. A
+single-degree model with just one predictor doesn't allow for any
+flexibility. So, we could instead fit a series of polynomial models.
+
+In the code chunk below, I will repeat the steps I performed above, but
+this time fit a series of polynomial models. This will be done in a for
+loop, from 1 degree to 8 degrees. Finally, I will plot each model
+against the data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Make 8 polynomial models, graph them, and collect adjusted R-Square value for each model.}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{8}\NormalTok{)\{}
+  
+  \CommentTok{# Make modelling dataframe. }
+\NormalTok{  Covid_Canada_dates <-}\StringTok{ }\NormalTok{Covid_Canada}
+  
+  \CommentTok{# Average cases per day, for all provinces.}
+\NormalTok{  Covid_Canada_dates <-}\StringTok{ }\NormalTok{Covid_Canada_dates }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{ddply}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"date"}\NormalTok{), summarise, }
+          \DataTypeTok{cases =} \KeywordTok{mean}\NormalTok{(cases), }
+          \DataTypeTok{deaths =} \KeywordTok{mean}\NormalTok{(deaths),}
+          \DataTypeTok{DailyCases =} \KeywordTok{sum}\NormalTok{(DailyCases),}
+          \DataTypeTok{DailyDeaths =} \KeywordTok{sum}\NormalTok{(DailyDeaths))}
+  
+  \CommentTok{# New dates dataframe.}
+\NormalTok{  New_Dates <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{date =}\KeywordTok{seq}\NormalTok{(}\KeywordTok{max}\NormalTok{(Covid_Canada_dates}\OperatorTok{$}\NormalTok{date),}\KeywordTok{max}\NormalTok{(Covid_Canada_dates}\OperatorTok{$}\NormalTok{date) }\OperatorTok{+}\StringTok{ }\DecValTok{30}\NormalTok{,}\DataTypeTok{by=}\StringTok{'days'}\NormalTok{),}
+                          \DataTypeTok{cases =} \OtherTok{NA}\NormalTok{,}
+                          \DataTypeTok{deaths =} \OtherTok{NA}\NormalTok{,}
+                          \DataTypeTok{DailyCases =} \OtherTok{NA}\NormalTok{,}
+                          \DataTypeTok{DailyDeaths =} \OtherTok{NA}\NormalTok{)}
+  
+  \CommentTok{# Delete first row.}
+\NormalTok{  New_Dates =}\StringTok{ }\NormalTok{New_Dates[}\OperatorTok{-}\DecValTok{1}\NormalTok{,]}
+  
+  \CommentTok{# Add future dates to end of modelling dataframe.}
+\NormalTok{  Covid_Canada_dates <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(Covid_Canada_dates, New_Dates)}
+  
+  \CommentTok{# Fit increasingly comlex polynomials.}
+\NormalTok{  model}\FloatTok{.1}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{300}\NormalTok{), cases }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(date, i))}
+
+  \CommentTok{# Predict COVID-19 infections with each polynomial model.}
+\NormalTok{  Covid_Canada_dates}\OperatorTok{$}\NormalTok{New <-}\StringTok{  }\KeywordTok{predict}\NormalTok{(}\DataTypeTok{object =}\NormalTok{ model}\FloatTok{.1}\NormalTok{, }\DataTypeTok{newdata =}\NormalTok{ Covid_Canada_dates)}
+  
+  \CommentTok{# Assign new name to each graph I make below.}
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"Graph"}\NormalTok{, i),}
+         
+         \CommentTok{# Plot data and polynomial regression line.}
+         \KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{300}\NormalTok{), }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ cases)) }\OperatorTok{+}\StringTok{ }
+\StringTok{           }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{color=}\StringTok{'blue'}\NormalTok{)  }\OperatorTok{+}
+\StringTok{           }\KeywordTok{ggtitle}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(i, }\StringTok{" degree polynomial"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{           }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{10}\NormalTok{)) }\OperatorTok{+}
+\StringTok{           }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{           }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{color=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{300}\NormalTok{), }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{date, }\DataTypeTok{y=}\NormalTok{New)))}
+  
+  \CommentTok{# Get Adjusted R-Squared value for each polynomial and assign it a new name.}
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"Adj"}\NormalTok{, i), }\KeywordTok{summary}\NormalTok{(model}\FloatTok{.1}\NormalTok{)}\OperatorTok{$}\NormalTok{adj.r.squared)}
+  
+  \CommentTok{# Model Summary.}
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"Model_Coeffs"}\NormalTok{, i),broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(model}\FloatTok{.1}\NormalTok{, }\DataTypeTok{conf.int =}\NormalTok{ T))}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Plot all 8 models on a single graph.}
+\NormalTok{multi <-}\StringTok{ }\KeywordTok{ggarrange}\NormalTok{(Graph1, Graph2, Graph3, Graph4, Graph5, Graph6, Graph7, Graph8)}
+\KeywordTok{annotate_figure}\NormalTok{(multi,}\DataTypeTok{top =} \KeywordTok{text_grob}\NormalTok{(}\StringTok{"Predicting Next 10 Days Of COVID"}\NormalTok{, }\DataTypeTok{color =} \StringTok{"black"}\NormalTok{, }\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{14}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/unnamed-chunk-11-1}
+
+Each model fits differently, with the 3 order polynomial maybe looking
+the best in terms of future predictions. However, these models may also
+be severly overfitting to the data. Plus, using dates from 8 months ago
+might not be best when trying to assess short term trends in infection
+rates. So, I am going to repeat the loop above, but this this time
+predict the next 10 days of infection using the previous 30 days as a
+predictor.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Make 8 polynomial models, graph them, and collect adjusted R-Square value for each model.}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{8}\NormalTok{)\{}
+  
+  \CommentTok{# Make modelling dataframe.}
+\NormalTok{  Covid_Canada_dates <-}\StringTok{ }\NormalTok{Covid_Canada}
+  
+  \CommentTok{# Average cases per day, for all provinces.}
+\NormalTok{  Covid_Canada_dates <-}\StringTok{ }\NormalTok{Covid_Canada_dates }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{ddply}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"date"}\NormalTok{), summarise,}
+          \DataTypeTok{cases =} \KeywordTok{mean}\NormalTok{(cases),}
+          \DataTypeTok{deaths =} \KeywordTok{mean}\NormalTok{(deaths),}
+          \DataTypeTok{DailyCases =} \KeywordTok{sum}\NormalTok{(DailyCases),}
+          \DataTypeTok{DailyDeaths =} \KeywordTok{sum}\NormalTok{(DailyDeaths))}
+  
+  \CommentTok{# New dates dataframe.}
+\NormalTok{  New_Dates <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{date =}\KeywordTok{seq}\NormalTok{(}\KeywordTok{max}\NormalTok{(Covid_Canada_dates}\OperatorTok{$}\NormalTok{date),}\KeywordTok{max}\NormalTok{(Covid_Canada_dates}\OperatorTok{$}\NormalTok{date) }\OperatorTok{+}\StringTok{ }\DecValTok{10}\NormalTok{,}\DataTypeTok{by=}\StringTok{'days'}\NormalTok{),}
+                          \DataTypeTok{cases =} \OtherTok{NA}\NormalTok{,}
+                          \DataTypeTok{deaths =} \OtherTok{NA}\NormalTok{,}
+                          \DataTypeTok{DailyCases =} \OtherTok{NA}\NormalTok{,}
+                          \DataTypeTok{DailyDeaths =} \OtherTok{NA}\NormalTok{)}
+  
+  \CommentTok{# Delete first row.}
+\NormalTok{  New_Dates =}\StringTok{ }\NormalTok{New_Dates[}\OperatorTok{-}\DecValTok{1}\NormalTok{,]}
+
+  \CommentTok{# Add future dates to end of modelling dataframe.}
+\NormalTok{  Covid_Canada_dates <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(Covid_Canada_dates, New_Dates)}
+
+  \CommentTok{# Fit increasingly comlex polynomials.}
+\NormalTok{  model}\FloatTok{.2}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{30}\NormalTok{), cases }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(date, i))}
+  
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"model_"}\NormalTok{, i), }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{30}\NormalTok{), cases }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(date, i)))}
+
+  \CommentTok{#broom::tidy(model.2, conf.int = T)}
+
+  \CommentTok{# Predict COVID-19 infections with each polynomial model.}
+\NormalTok{  Covid_Canada_dates}\OperatorTok{$}\NormalTok{New <-}\StringTok{  }\KeywordTok{predict}\NormalTok{(}\DataTypeTok{object =}\NormalTok{ model}\FloatTok{.2}\NormalTok{, }\DataTypeTok{newdata =}\NormalTok{ Covid_Canada_dates)}
+  
+  \CommentTok{# Assign new name to each graph I make below.}
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"Graph"}\NormalTok{, i),}
+         
+         \CommentTok{# Plot data and polynomial regression line.}
+         \KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{30}\NormalTok{), }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ cases)) }\OperatorTok{+}\StringTok{ }
+\StringTok{           }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{color=}\StringTok{'blue'}\NormalTok{)  }\OperatorTok{+}
+\StringTok{           }\KeywordTok{ggtitle}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(i, }\StringTok{" degree polynomial"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{           }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size=}\DecValTok{10}\NormalTok{)) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{8}\NormalTok{, }\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{), }
+                  \DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{           }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{color=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{30}\NormalTok{), }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{date, }\DataTypeTok{y=}\NormalTok{New)))}
+  
+  \CommentTok{# Get Adjusted R-Squared value for each polynomial and assign it a new name.}
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"Adj"}\NormalTok{, i), }\KeywordTok{summary}\NormalTok{(model}\FloatTok{.2}\NormalTok{)}\OperatorTok{$}\NormalTok{adj.r.squared)}
+
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"Mod"}\NormalTok{, i), }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{tail}\NormalTok{(Covid_Canada_dates, }\DataTypeTok{n =} \DecValTok{30}\NormalTok{), cases }\OperatorTok{~}\StringTok{ }\KeywordTok{poly}\NormalTok{(date, i)))}
+  
+  \CommentTok{# Model Summary.}
+  \KeywordTok{assign}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"Model_Coeffs"}\NormalTok{, i),broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(model}\FloatTok{.1}\NormalTok{, }\DataTypeTok{conf.int =}\NormalTok{ T))}
+
+\NormalTok{  \}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{multi <-}\StringTok{ }\KeywordTok{ggarrange}\NormalTok{(Graph1, Graph2, Graph3, Graph4, Graph5, Graph6, Graph7, Graph8)}
+\KeywordTok{annotate_figure}\NormalTok{(multi,}\DataTypeTok{top =} \KeywordTok{text_grob}\NormalTok{(}\StringTok{"Predicting Next 10 Days Of COVID"}\NormalTok{, }\DataTypeTok{color =} \StringTok{"black"}\NormalTok{, }\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{14}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/unnamed-chunk-13-1}
+
+Some of the higher order polynomial fits are pretty bad, but a few look
+alright. I'm going to focus on the 3-order polynomial and pretend it was
+the model I thought was best.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Model Summary.}
+
+\NormalTok{broom}\OperatorTok{::}\KeywordTok{tidy}\NormalTok{(model_}\DecValTok{3}\NormalTok{, }\DataTypeTok{conf.int =}\NormalTok{ T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 7
+##   term           estimate std.error statistic  p.value conf.low conf.high
+##   <chr>             <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
+## 1 (Intercept)     125316.      246.   510.    4.06e-35  124795.   125837.
+## 2 poly(date, i)1   37302.     1819.    20.5   6.52e-13   33445.    41159.
+## 3 poly(date, i)2    5665.     1388.     4.08  8.68e- 4    2723.     8607.
+## 4 poly(date, i)3     626.      664.     0.942 3.60e- 1    -782.     2034.
+\end{verbatim}
+
+We could then apply these coefficients to each new date and get a new
+COVID-19 infection total for that day in the future.
+
+It should be stressed, however, that this model probably isn't very
+good. A more accurate model would need many more predictors, and I would
+probably assess overfitting using processes like cross-validation to
+assess model variance out of sample. But for this assignment, I will
+leave this as it is.
+
+\hypertarget{functions}{%
+\section{Functions}\label{functions}}
+
+The dataset I used contains data from every country in the world, not
+just Canada. If I wanted to repeat the graphs and analyses I did, I
+would have to painstakingly replace each code chunk with the new country
+and re-run everything. I decided to make some functions that not only
+repeat the analyses I did for Canada, but allow the user to simply add
+the country they want to the function, and instantly get up to date
+COVID graphs and numbers for that country.
+
+\hypertarget{function-1}{%
+\subsection{Function 1}\label{function-1}}
+
+\hypertarget{country-list}{%
+\subsubsection{Country List}\label{country-list}}
+
+For users of these functions, it will be useful to get a list of names
+of countries that can be used. This function takes no arguments, and
+simply outputs a list of all countries the user could choose from.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Country_List <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
+  
+  \CommentTok{# Total Global Cases Data}
+\NormalTok{  x <-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"}\NormalTok{))}
+  
+  \CommentTok{# Total global cases data in long format.}
+\NormalTok{  COVID_Global_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(x, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{# compute all unique countries and return a list.}
+  \KeywordTok{return}\NormalTok{(}\KeywordTok{unique}\NormalTok{(COVID_Global_Long_Date}\OperatorTok{$}\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{))}
+
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Test the function.}
+\KeywordTok{Country_List}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   [1] "Afghanistan"                      "Albania"                         
+##   [3] "Algeria"                          "Andorra"                         
+##   [5] "Angola"                           "Antigua and Barbuda"             
+##   [7] "Argentina"                        "Armenia"                         
+##   [9] "Australia"                        "Austria"                         
+##  [11] "Azerbaijan"                       "Bahamas"                         
+##  [13] "Bahrain"                          "Bangladesh"                      
+##  [15] "Barbados"                         "Belarus"                         
+##  [17] "Belgium"                          "Belize"                          
+##  [19] "Benin"                            "Bhutan"                          
+##  [21] "Bolivia"                          "Bosnia and Herzegovina"          
+##  [23] "Botswana"                         "Brazil"                          
+##  [25] "Brunei"                           "Bulgaria"                        
+##  [27] "Burkina Faso"                     "Burma"                           
+##  [29] "Burundi"                          "Cabo Verde"                      
+##  [31] "Cambodia"                         "Cameroon"                        
+##  [33] "Canada"                           "Central African Republic"        
+##  [35] "Chad"                             "Chile"                           
+##  [37] "China"                            "Colombia"                        
+##  [39] "Comoros"                          "Congo (Brazzaville)"             
+##  [41] "Congo (Kinshasa)"                 "Costa Rica"                      
+##  [43] "Cote d'Ivoire"                    "Croatia"                         
+##  [45] "Cuba"                             "Cyprus"                          
+##  [47] "Czechia"                          "Denmark"                         
+##  [49] "Diamond Princess"                 "Djibouti"                        
+##  [51] "Dominica"                         "Dominican Republic"              
+##  [53] "Ecuador"                          "Egypt"                           
+##  [55] "El Salvador"                      "Equatorial Guinea"               
+##  [57] "Eritrea"                          "Estonia"                         
+##  [59] "Eswatini"                         "Ethiopia"                        
+##  [61] "Fiji"                             "Finland"                         
+##  [63] "France"                           "Gabon"                           
+##  [65] "Gambia"                           "Georgia"                         
+##  [67] "Germany"                          "Ghana"                           
+##  [69] "Greece"                           "Grenada"                         
+##  [71] "Guatemala"                        "Guinea"                          
+##  [73] "Guinea-Bissau"                    "Guyana"                          
+##  [75] "Haiti"                            "Holy See"                        
+##  [77] "Honduras"                         "Hungary"                         
+##  [79] "Iceland"                          "India"                           
+##  [81] "Indonesia"                        "Iran"                            
+##  [83] "Iraq"                             "Ireland"                         
+##  [85] "Israel"                           "Italy"                           
+##  [87] "Jamaica"                          "Japan"                           
+##  [89] "Jordan"                           "Kazakhstan"                      
+##  [91] "Kenya"                            "Korea, South"                    
+##  [93] "Kosovo"                           "Kuwait"                          
+##  [95] "Kyrgyzstan"                       "Laos"                            
+##  [97] "Latvia"                           "Lebanon"                         
+##  [99] "Lesotho"                          "Liberia"                         
+## [101] "Libya"                            "Liechtenstein"                   
+## [103] "Lithuania"                        "Luxembourg"                      
+## [105] "MS Zaandam"                       "Madagascar"                      
+## [107] "Malawi"                           "Malaysia"                        
+## [109] "Maldives"                         "Mali"                            
+## [111] "Malta"                            "Marshall Islands"                
+## [113] "Mauritania"                       "Mauritius"                       
+## [115] "Mexico"                           "Micronesia"                      
+## [117] "Moldova"                          "Monaco"                          
+## [119] "Mongolia"                         "Montenegro"                      
+## [121] "Morocco"                          "Mozambique"                      
+## [123] "Namibia"                          "Nepal"                           
+## [125] "Netherlands"                      "New Zealand"                     
+## [127] "Nicaragua"                        "Niger"                           
+## [129] "Nigeria"                          "North Macedonia"                 
+## [131] "Norway"                           "Oman"                            
+## [133] "Pakistan"                         "Panama"                          
+## [135] "Papua New Guinea"                 "Paraguay"                        
+## [137] "Peru"                             "Philippines"                     
+## [139] "Poland"                           "Portugal"                        
+## [141] "Qatar"                            "Romania"                         
+## [143] "Russia"                           "Rwanda"                          
+## [145] "Saint Kitts and Nevis"            "Saint Lucia"                     
+## [147] "Saint Vincent and the Grenadines" "Samoa"                           
+## [149] "San Marino"                       "Sao Tome and Principe"           
+## [151] "Saudi Arabia"                     "Senegal"                         
+## [153] "Serbia"                           "Seychelles"                      
+## [155] "Sierra Leone"                     "Singapore"                       
+## [157] "Slovakia"                         "Slovenia"                        
+## [159] "Solomon Islands"                  "Somalia"                         
+## [161] "South Africa"                     "South Sudan"                     
+## [163] "Spain"                            "Sri Lanka"                       
+## [165] "Sudan"                            "Suriname"                        
+## [167] "Sweden"                           "Switzerland"                     
+## [169] "Syria"                            "Taiwan*"                         
+## [171] "Tajikistan"                       "Tanzania"                        
+## [173] "Thailand"                         "Timor-Leste"                     
+## [175] "Togo"                             "Trinidad and Tobago"             
+## [177] "Tunisia"                          "Turkey"                          
+## [179] "US"                               "Uganda"                          
+## [181] "Ukraine"                          "United Arab Emirates"            
+## [183] "United Kingdom"                   "Uruguay"                         
+## [185] "Uzbekistan"                       "Vanuatu"                         
+## [187] "Venezuela"                        "Vietnam"                         
+## [189] "West Bank and Gaza"               "Yemen"                           
+## [191] "Zambia"                           "Zimbabwe"
+\end{verbatim}
+
+\hypertarget{function-2}{%
+\subsection{Function 2}\label{function-2}}
+
+\hypertarget{total-casesdeaths-in-total-country}{%
+\subsubsection{Total cases/deaths in total
+country}\label{total-casesdeaths-in-total-country}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{COVID_Country_Data <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(country)\{}
+  
+  \CommentTok{# Adds quotes to country argument which is needed for the subset function.}
+\NormalTok{  country <-}\StringTok{ }\NormalTok{rlang}\OperatorTok{::}\KeywordTok{quo_name}\NormalTok{(rlang}\OperatorTok{::}\KeywordTok{enquo}\NormalTok{(country))}
+  
+  \CommentTok{# Total Global Cases Data}
+\NormalTok{  COVID_Global_Wide<-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"}\NormalTok{))}
+
+  \CommentTok{# Total Global Deaths Data}
+\NormalTok{  COVID_Global_Deaths_Wide <-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"}\NormalTok{))}
+  
+  \CommentTok{# Total global cases data in long format.}
+\NormalTok{  COVID_Global_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{# Total global deaths data in long format}
+\NormalTok{  COVID_Global_Deaths_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Deaths_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Deaths_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{# Combine death count to cases dataframe.}
+\NormalTok{  COVID_Global_Long_Date}\OperatorTok{$}\NormalTok{deaths <-}\StringTok{ }\NormalTok{COVID_Global_Deaths_Long_Date}\OperatorTok{$}\NormalTok{cases}
+  
+  \CommentTok{# Subset Canadian provinces from total cumulative global cases data.}
+\NormalTok{  Covid <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(COVID_Global_Long_Date, }\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`} \OperatorTok{==}\StringTok{ }\NormalTok{country)}
+  
+  \CommentTok{### Some countries have provinces, others don't. The strategy I am using to make the dataframes for entire country}
+  \CommentTok{### won't work in both instances. So we need to apply averaging differently.}
+  
+  \CommentTok{# If Province/State is empty:}
+  \ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{) }\OperatorTok{==}\StringTok{ }\OtherTok{TRUE}\NormalTok{)\{}
+    
+    \CommentTok{# Calculate cases per day by subtracting current count in each row by total cases up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyCases <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{cases,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+    \CommentTok{# Calculate deaths per day by subtracting current count in each row by total deaths up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyDeaths <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{deaths,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+\NormalTok{    \}}
+  
+  \CommentTok{# If Province/State has values:}
+  \ControlFlowTok{else}\NormalTok{\{}
+    
+    \CommentTok{# Calculate cases per day by subtracting current count in each row by total cases up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyCases <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{cases,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+    \CommentTok{# Calculate deaths per day by subtracting current count in each row by total deaths up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyDeaths <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{deaths,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+\NormalTok{    \}}
+  
+  \CommentTok{# Make total cases/deaths chart.}
+\NormalTok{  Chart <-}\StringTok{ }\NormalTok{Covid }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ddply}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"`Country/Region`"}\NormalTok{), summarise,}
+        \DataTypeTok{cases =} \KeywordTok{sum}\NormalTok{(DailyCases),}
+        \DataTypeTok{deaths =} \KeywordTok{sum}\NormalTok{(DailyDeaths)) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{gather}\NormalTok{(Category, Number, cases}\OperatorTok{:}\NormalTok{deaths)}
+  
+  \CommentTok{# Return chart.}
+  \KeywordTok{return}\NormalTok{(Chart)}
+  
+\NormalTok{  \}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{test-covid-country-data-function}{%
+\subsection{Test COVID Country Data
+Function}\label{test-covid-country-data-function}}
+
+To make sure the function can deal both with situations where their are
+no provinces, and situations where their are provinces.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Test Portugal, since it has no Provinces.}
+\KeywordTok{COVID_Country_Data}\NormalTok{(Portugal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Country/Region Category Number
+## 1       Portugal    cases 824368
+## 2       Portugal   deaths  16887
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Test Canada, since it has Provinces.}
+\KeywordTok{COVID_Country_Data}\NormalTok{(Canada)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Country/Region Category  Number
+## 1         Canada    cases 1027854
+## 2         Canada   deaths   23132
+\end{verbatim}
+
+\hypertarget{covid-country-graph-function}{%
+\subsection{COVID Country Graph
+Function}\label{covid-country-graph-function}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{COVID_Country_Graph <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(country)\{}
+  
+  \CommentTok{# Adds quotes to country argument which is needed for the subset function.}
+\NormalTok{  country <-}\StringTok{ }\NormalTok{rlang}\OperatorTok{::}\KeywordTok{quo_name}\NormalTok{(rlang}\OperatorTok{::}\KeywordTok{enquo}\NormalTok{(country))}
+  
+  \CommentTok{# Total Global Cases Data}
+\NormalTok{  COVID_Global_Wide<-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"}\NormalTok{))}
+
+  \CommentTok{# Total Global Deaths Data}
+\NormalTok{  COVID_Global_Deaths_Wide <-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"}\NormalTok{))}
+  
+  \CommentTok{# Total global cases data in long format.}
+\NormalTok{  COVID_Global_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{# Total global deaths data in long format}
+\NormalTok{  COVID_Global_Deaths_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Deaths_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Deaths_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{# Combine death count to cases dataframe.}
+\NormalTok{  COVID_Global_Long_Date}\OperatorTok{$}\NormalTok{deaths <-}\StringTok{ }\NormalTok{COVID_Global_Deaths_Long_Date}\OperatorTok{$}\NormalTok{cases}
+  
+  \CommentTok{# Subset Canadian provinces from total cumulative global cases data.}
+\NormalTok{  Covid <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(COVID_Global_Long_Date, }\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`} \OperatorTok{==}\StringTok{ }\NormalTok{country)}
+  
+  \CommentTok{### Some countries have provinces, others don't. The strategy I am using to make the dataframes for entire country}
+  \CommentTok{### won't work in both instances. So we need to apply averaging differently.}
+  
+  \CommentTok{# If Province/State is empty:}
+  \ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{) }\OperatorTok{==}\StringTok{ }\OtherTok{TRUE}\NormalTok{)\{}
+    
+    \CommentTok{# Calculate cases per day by subtracting current count in each row by total cases up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyCases <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{cases,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+    \CommentTok{# Calculate deaths per day by subtracting current count in each row by total deaths up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyDeaths <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{deaths,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+\NormalTok{    \}}
+  
+  \CommentTok{# If Province/State has values:}
+  \ControlFlowTok{else}\NormalTok{\{}
+    
+    \CommentTok{# Calculate cases per day by subtracting current count in each row by total cases up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyCases <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{cases,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+    \CommentTok{# Calculate deaths per day by subtracting current count in each row by total deaths up until that point.}
+\NormalTok{    Covid}\OperatorTok{$}\NormalTok{DailyDeaths <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{deaths,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Province/State}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+\NormalTok{    \}}
+  
+  \CommentTok{# Set Theme.}
+  \KeywordTok{ggthemr}\NormalTok{(}\StringTok{"flat"}\NormalTok{)}
+
+  \CommentTok{# average data in dataframe for graphing.}
+\NormalTok{  a <-}\StringTok{ }\NormalTok{Covid }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{ddply}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"`Country/Region`"}\NormalTok{), summarise,}
+          \DataTypeTok{cases =} \KeywordTok{sum}\NormalTok{(DailyCases),}
+          \DataTypeTok{deaths =} \KeywordTok{sum}\NormalTok{(DailyDeaths)) }\OperatorTok{%>%}
+\StringTok{    }\KeywordTok{gather}\NormalTok{(Category, Number, cases}\OperatorTok{:}\NormalTok{deaths) }\OperatorTok{%>%}
+\StringTok{    }
+\StringTok{    }\CommentTok{# Graph total cases and deaths per province, tilt sideways, stack cases/deaths, display cases count on x-axis/death count above each bar.}
+\StringTok{    }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{, }\DataTypeTok{y =}\NormalTok{ Number, }\DataTypeTok{fill =} \KeywordTok{factor}\NormalTok{(Category, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{"deaths"}\NormalTok{, }\StringTok{"cases"}\NormalTok{)))) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{, }\DataTypeTok{position =} \StringTok{"dodge"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{scale_colour_ggthemr_d}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{labels =} \ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{format}\NormalTok{(x, }\DataTypeTok{scientific =} \OtherTok{FALSE}\NormalTok{))  }\OperatorTok{+}
+\StringTok{    }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Country"}\NormalTok{,}
+         \DataTypeTok{y =} \StringTok{"COVID-19 Cases And Deaths"}\NormalTok{,}
+         \DataTypeTok{title =} \KeywordTok{paste0}\NormalTok{(}\StringTok{"Total COVID-19 Cases In "}\NormalTok{, country),}
+         \DataTypeTok{caption =} \KeywordTok{paste0}\NormalTok{(}\StringTok{"Data source: Government of "}\NormalTok{, country),}
+         \DataTypeTok{fill =} \StringTok{"Case Type"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_text}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{label =}\NormalTok{ Number), }\DataTypeTok{position =} \KeywordTok{position_dodge}\NormalTok{(}\DataTypeTok{width=}\FloatTok{0.9}\NormalTok{), }\DataTypeTok{vjust =} \FloatTok{-.2}\NormalTok{)}
+  
+  \KeywordTok{return}\NormalTok{(a)}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{test-covid-country-graph-function}{%
+\subsection{Test COVID Country Graph
+Function}\label{test-covid-country-graph-function}}
+
+To make sure the function can deal both with situations where their are
+no provinces, and situations where their are provinces.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Test Portugal, since it has no Provinces.}
+\KeywordTok{COVID_Country_Graph}\NormalTok{(Portugal)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/unnamed-chunk-20-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Test Canada, since it has Provinces.}
+\KeywordTok{COVID_Country_Graph}\NormalTok{(Canada)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{COVID_Canada_files/figure-latex/unnamed-chunk-20-2}
+
+\hypertarget{covid-country-cumulative-graph-function}{%
+\subsection{COVID Country Cumulative Graph
+Function}\label{covid-country-cumulative-graph-function}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{COVID_Country_Cumulative_Graph <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(country)\{}
+  
+  \CommentTok{# Adds quotes to country argument which is needed for the subset function.}
+\NormalTok{  country <-}\StringTok{ }\NormalTok{rlang}\OperatorTok{::}\KeywordTok{quo_name}\NormalTok{(rlang}\OperatorTok{::}\KeywordTok{enquo}\NormalTok{(country))}
+  
+  \CommentTok{# Total Global Cases Data}
+\NormalTok{  COVID_Global_Wide<-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"}\NormalTok{))}
+
+  \CommentTok{# Total Global Deaths Data}
+\NormalTok{  COVID_Global_Deaths_Wide <-}\KeywordTok{read_csv}\NormalTok{(}\KeywordTok{url}\NormalTok{(}\StringTok{"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"}\NormalTok{))}
+  
+  \CommentTok{# Total global cases data in long format.}
+\NormalTok{  COVID_Global_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{# Total global deaths data in long format}
+\NormalTok{  COVID_Global_Deaths_Long_Date <-}\StringTok{ }\KeywordTok{gather}\NormalTok{(COVID_Global_Deaths_Wide, date, cases, }\DecValTok{5}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(COVID_Global_Deaths_Wide), }\DataTypeTok{factor_key=}\OtherTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{# Combine death count to cases dataframe.}
+\NormalTok{  COVID_Global_Long_Date}\OperatorTok{$}\NormalTok{deaths <-}\StringTok{ }\NormalTok{COVID_Global_Deaths_Long_Date}\OperatorTok{$}\NormalTok{cases}
+  
+  \CommentTok{# Filter canadian provincial data to only include data starting from March 1st.}
+\NormalTok{  Covid <-}\StringTok{ }\NormalTok{Covid[}\DecValTok{352}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(COVID_Global_Long_Date), ]}
+  
+  \CommentTok{# Subset Canadian provinces from total cumulative global cases data.}
+\NormalTok{  Covid <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(COVID_Global_Long_Date, }\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`} \OperatorTok{==}\StringTok{ }\NormalTok{country)}
+  
+  \CommentTok{# Convert date column to date format for cases dataframe.}
+\NormalTok{  Covid}\OperatorTok{$}\NormalTok{date <-}\StringTok{ }\KeywordTok{as.Date}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{date, }\DataTypeTok{format =} \StringTok{"%m/%d/%Y"}\NormalTok{)}
+  
+  \CommentTok{# Calculate cases per day by subtracting current count in each row by total cases up until that point.}
+\NormalTok{  Covid}\OperatorTok{$}\NormalTok{DailyCases <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{cases,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+    
+  \CommentTok{# Calculate deaths per day by subtracting current count in each row by total deaths up until that point.}
+\NormalTok{  Covid}\OperatorTok{$}\NormalTok{DailyDeaths <-}\StringTok{ }\KeywordTok{ave}\NormalTok{(Covid}\OperatorTok{$}\NormalTok{deaths,Covid}\OperatorTok{$}\StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{,  }\DataTypeTok{FUN=}\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\KeywordTok{diff}\NormalTok{(x)))}
+  
+  \CommentTok{# Set Theme.}
+  \KeywordTok{ggthemr}\NormalTok{(}\StringTok{"flat"}\NormalTok{)}
+  
+  \CommentTok{# Cumulative Cases Graph.}
+\NormalTok{  a <-}\StringTok{ }\NormalTok{Covid }\OperatorTok{%>%}\StringTok{ }
+\StringTok{    }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date, }\DataTypeTok{y =}\NormalTok{ cases, }\DataTypeTok{color =} \StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{, }\DataTypeTok{group =} \StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{, }\DataTypeTok{fill =} \StringTok{`}\DataTypeTok{Country/Region}\StringTok{`}\NormalTok{)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{geom_area}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"March 1st (2020) To Present"}\NormalTok{,}
+         \DataTypeTok{y =} \StringTok{"Cumulative Cases Per 100,000 People"}\NormalTok{,}
+         \DataTypeTok{title =} \StringTok{"Coronavirus Cases Per Canadian Province"}\NormalTok{,}
+         \DataTypeTok{caption =} \StringTok{"Data source: Government of Canada"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_colour_ggthemr_d}\NormalTok{() }\OperatorTok{+}
+\StringTok{    }\KeywordTok{scale_x_date}\NormalTok{(}\DataTypeTok{date_breaks =} \StringTok{'1 month'}\NormalTok{, }\DataTypeTok{date_labels =} \StringTok{'%B'}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{9}\NormalTok{, }\DataTypeTok{angle =} \DecValTok{45}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{), }\DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{hjust =} \FloatTok{0.5}\NormalTok{))}
+  
+  \KeywordTok{return}\NormalTok{(a)}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#COVID_Country_Cumulative_Graph(Portugal)}
+\CommentTok{#COVID_Country_Cumulative_Graph(US)}
+\end{Highlighting}
+\end{Shaded}
+
+
+
+\end{document}

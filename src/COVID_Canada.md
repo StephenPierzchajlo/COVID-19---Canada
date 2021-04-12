@@ -4,24 +4,39 @@ Stephen Pierzchajlo
 
 # Introduction
 
-Many months ago I helped analyse data for a paper on COVID-19. The paper
-is currently under review, but all analyses, data, and scripts can be
-found here: <https://osf.io/c8zhn/>
+I have used R for a few years now, and every project I am currently
+working on has a completed R script already made. Therefore, it didn’t
+make sense to me to just redo my analyses. I decided I wanted to do
+something new for this course, and do something I had never done before.
+One aspect of programming that I never was comfortable with was writing
+functions. So the ultimate goal of this project is to write functions
+that will perform an entire analysis in an interesting way, while still
+staying within the parameters of the assignment.
+
+## My Project Idea
+
+Many months ago I analysed data for a paper on COVID-19. The paper is
+currently under review, but all analyses, data, and scripts can be found
+here: <https://osf.io/c8zhn/>. Part of my work involved getting COVID-19
+infection rate data for 4 specific weeks in March/April to use as a
+random effects parameter in a multiple regression model. The specific
+COVID-19 repository I found gets updated daily and contains data for
+every country (and every sub-region in that country) in the world. I
+thought it would be interesting to create a set of functions that could
+analyse any country the user chooses in a variety of ways, and output
+COVID-19 related statistics and visualisations of infection trends. So
+that is my goal.
 
 <br/>
 
-My contribution included getting COVID-19 data for 4 specific weeks to
-use as 1 predictor in a model for the main analysis of the paper.
-Because I have a COVID-19 data repository at hand, I wanted to put
-together a project where I look at Canadian COVID-19 data.
-
-<br/>
-
-Here I’ll demonstrate how to automatically download COVID-19 worldwide
-data, clean the dataframe, display simple figures, and do some simple
-predictive modelling. Importantly, the data I’ll be using is massive and
-not yet ready for visualisation in its raw format, so I need to perform
-some wrangling first.
+In this project, I will first analyse COVID-19 data for 1 country in
+great detail, and then ultimately automate these analyses with a number
+of functions that generalise across any country the user wants. Because
+I am Canadian, I decided to first analyse Canadian COVID-19 data in as
+much detail as possible. This will include downloading the data from a
+specific source, wrangling it into a condensed dataframe, graphing the
+data in various ways, and even doing some basic modelling to predict
+future infection rates.
 
 ## Load Libraries
 
@@ -71,7 +86,7 @@ cat(" There are", nrow(COVID_Global_Wide), "rows in this dataframe.\n","There ar
 ```
 
     ##  There are 274 rows in this dataframe.
-    ##  There are 444 columns in this dataframe.
+    ##  There are 445 columns in this dataframe.
 
 There are a massive number of columns. Why is that? I decided to take a
 look at the overall structure.
@@ -81,7 +96,7 @@ look at the overall structure.
 COVID_Global_Wide[1:10, ]
 ```
 
-    ## # A tibble: 10 x 444
+    ## # A tibble: 10 x 445
     ##    `Province/State`  `Country/Region`   Lat   Long `1/22/20` `1/23/20` `1/24/20`
     ##    <chr>             <chr>            <dbl>  <dbl>     <dbl>     <dbl>     <dbl>
     ##  1 <NA>              Afghanistan       33.9  67.7          0         0         0
@@ -94,7 +109,7 @@ COVID_Global_Wide[1:10, ]
     ##  8 <NA>              Armenia           40.1  45.0          0         0         0
     ##  9 Australian Capit~ Australia        -35.5 149.           0         0         0
     ## 10 New South Wales   Australia        -33.9 151.           0         0         0
-    ## # ... with 437 more variables: 1/25/20 <dbl>, 1/26/20 <dbl>, 1/27/20 <dbl>,
+    ## # ... with 438 more variables: 1/25/20 <dbl>, 1/26/20 <dbl>, 1/27/20 <dbl>,
     ## #   1/28/20 <dbl>, 1/29/20 <dbl>, 1/30/20 <dbl>, 1/31/20 <dbl>, 2/1/20 <dbl>,
     ## #   2/2/20 <dbl>, 2/3/20 <dbl>, 2/4/20 <dbl>, 2/5/20 <dbl>, 2/6/20 <dbl>,
     ## #   2/7/20 <dbl>, 2/8/20 <dbl>, 2/9/20 <dbl>, 2/10/20 <dbl>, 2/11/20 <dbl>,
@@ -177,7 +192,7 @@ for(i in length(colnames(COVID_Global_Long_Date)) - 2){
 
     ## 
     ##   TRUE 
-    ## 120120
+    ## 120393
 
 Everything matches, so I’m going to add the cases column from the deaths
 dataframe to the cases dataframe. Additionally, I’ll call this new
@@ -295,14 +310,14 @@ Looking at the data below…
 str(Covid_Canada)
 ```
 
-    ## tibble [3,169 x 7] (S3: tbl_df/tbl/data.frame)
-    ##  $ Province/State: chr [1:3169] "Saskatchewan" "Alberta" "British Columbia" "Manitoba" ...
-    ##  $ Country/Region: chr [1:3169] "Canada" "Canada" "Canada" "Canada" ...
-    ##  $ Lat           : num [1:3169] 52.9 53.9 53.7 53.8 46.6 ...
-    ##  $ Long          : num [1:3169] -106.5 -116.6 -127.6 -98.8 -66.5 ...
-    ##  $ date          : Factor w/ 440 levels "1/22/20","1/23/20",..: 44 45 45 45 45 45 45 45 45 46 ...
-    ##  $ cases         : num [1:3169] 0 1 21 0 0 0 25 2 0 2 ...
-    ##  $ deaths        : num [1:3169] 0 0 0 0 0 0 0 0 0 0 ...
+    ## tibble [3,177 x 7] (S3: tbl_df/tbl/data.frame)
+    ##  $ Province/State: chr [1:3177] "Saskatchewan" "Alberta" "British Columbia" "Manitoba" ...
+    ##  $ Country/Region: chr [1:3177] "Canada" "Canada" "Canada" "Canada" ...
+    ##  $ Lat           : num [1:3177] 52.9 53.9 53.7 53.8 46.6 ...
+    ##  $ Long          : num [1:3177] -106.5 -116.6 -127.6 -98.8 -66.5 ...
+    ##  $ date          : Factor w/ 441 levels "1/22/20","1/23/20",..: 44 45 45 45 45 45 45 45 45 46 ...
+    ##  $ cases         : num [1:3177] 0 1 21 0 0 0 25 2 0 2 ...
+    ##  $ deaths        : num [1:3177] 0 0 0 0 0 0 0 0 0 0 ...
 
 …the date object is a Factor. However, I want it to be a date object
 instead. Below I do just that.
@@ -315,7 +330,7 @@ Covid_Canada$date <- as.Date(Covid_Canada$date, format = "%m/%d/%Y")
 str(Covid_Canada$date)
 ```
 
-    ##  Date[1:3169], format: "0020-03-05" "0020-03-06" "0020-03-06" "0020-03-06" "0020-03-06" ...
+    ##  Date[1:3177], format: "0020-03-05" "0020-03-06" "0020-03-06" "0020-03-06" "0020-03-06" ...
 
 Now we can see how the dates are formatted as actual dates.
 
@@ -566,17 +581,17 @@ New_Dates
 ```
 
     ##          date cases deaths DailyCases DailyDeaths
-    ## 1  0021-04-05    NA     NA         NA          NA
-    ## 2  0021-04-06    NA     NA         NA          NA
-    ## 3  0021-04-07    NA     NA         NA          NA
-    ## 4  0021-04-08    NA     NA         NA          NA
-    ## 5  0021-04-09    NA     NA         NA          NA
-    ## 6  0021-04-10    NA     NA         NA          NA
-    ## 7  0021-04-11    NA     NA         NA          NA
-    ## 8  0021-04-12    NA     NA         NA          NA
-    ## 9  0021-04-13    NA     NA         NA          NA
-    ## 10 0021-04-14    NA     NA         NA          NA
-    ## 11 0021-04-15    NA     NA         NA          NA
+    ## 1  0021-04-06    NA     NA         NA          NA
+    ## 2  0021-04-07    NA     NA         NA          NA
+    ## 3  0021-04-08    NA     NA         NA          NA
+    ## 4  0021-04-09    NA     NA         NA          NA
+    ## 5  0021-04-10    NA     NA         NA          NA
+    ## 6  0021-04-11    NA     NA         NA          NA
+    ## 7  0021-04-12    NA     NA         NA          NA
+    ## 8  0021-04-13    NA     NA         NA          NA
+    ## 9  0021-04-14    NA     NA         NA          NA
+    ## 10 0021-04-15    NA     NA         NA          NA
+    ## 11 0021-04-16    NA     NA         NA          NA
 
 We can see the dataframe just contains a column of future dates, and
 NA’s for all other columns. This is so that we can add these dates to
@@ -594,12 +609,12 @@ head(New_Dates)
 ```
 
     ##         date cases deaths DailyCases DailyDeaths
-    ## 2 0021-04-06    NA     NA         NA          NA
-    ## 3 0021-04-07    NA     NA         NA          NA
-    ## 4 0021-04-08    NA     NA         NA          NA
-    ## 5 0021-04-09    NA     NA         NA          NA
-    ## 6 0021-04-10    NA     NA         NA          NA
-    ## 7 0021-04-11    NA     NA         NA          NA
+    ## 2 0021-04-07    NA     NA         NA          NA
+    ## 3 0021-04-08    NA     NA         NA          NA
+    ## 4 0021-04-09    NA     NA         NA          NA
+    ## 5 0021-04-10    NA     NA         NA          NA
+    ## 6 0021-04-11    NA     NA         NA          NA
+    ## 7 0021-04-12    NA     NA         NA          NA
 
 Now the datafrmae starts on the NEXT day.
 
@@ -616,21 +631,21 @@ tail(Covid_Canada_dates, n = 15)
 ```
 
     ##            date    cases   deaths DailyCases DailyDeaths
-    ## 393  0021-04-01 124016.1 2865.750       5738          38
     ## 394  0021-04-02 124472.4 2867.375       3650          13
     ## 395  0021-04-03 125357.9 2870.750       7084          27
     ## 396  0021-04-04 125796.0 2873.500       3505          22
     ## 397  0021-04-05 126835.9 2876.375       8319          23
-    ## 2100 0021-04-06       NA       NA         NA          NA
-    ## 398  0021-04-07       NA       NA         NA          NA
-    ## 410  0021-04-08       NA       NA         NA          NA
-    ## 510  0021-04-09       NA       NA         NA          NA
-    ## 610  0021-04-10       NA       NA         NA          NA
-    ## 710  0021-04-11       NA       NA         NA          NA
-    ## 810  0021-04-12       NA       NA         NA          NA
-    ## 910  0021-04-13       NA       NA         NA          NA
-    ## 1010 0021-04-14       NA       NA         NA          NA
-    ## 1110 0021-04-15       NA       NA         NA          NA
+    ## 398  0021-04-06 128175.4 2882.500      10716          49
+    ## 2100 0021-04-07       NA       NA         NA          NA
+    ## 399  0021-04-08       NA       NA         NA          NA
+    ## 410  0021-04-09       NA       NA         NA          NA
+    ## 510  0021-04-10       NA       NA         NA          NA
+    ## 610  0021-04-11       NA       NA         NA          NA
+    ## 710  0021-04-12       NA       NA         NA          NA
+    ## 810  0021-04-13       NA       NA         NA          NA
+    ## 910  0021-04-14       NA       NA         NA          NA
+    ## 1010 0021-04-15       NA       NA         NA          NA
+    ## 1110 0021-04-16       NA       NA         NA          NA
 
 Now the dataframe has contains future dates as well.
 
@@ -667,8 +682,8 @@ broom::tidy(model.1, conf.int = T)
     ## # A tibble: 2 x 7
     ##   term          estimate  std.error statistic   p.value   conf.low  conf.high
     ##   <chr>            <dbl>      <dbl>     <dbl>     <dbl>      <dbl>      <dbl>
-    ## 1 (Intercept) 315904906. 5839560.        54.1 6.60e-153 304411278. 327398534.
-    ## 2 date              444.       8.20      54.1 6.90e-153       428.       460.
+    ## 1 (Intercept) 317732235. 5803251.        54.8 2.82e-154 306310072. 329154398.
+    ## 2 date              446.       8.15      54.7 2.95e-154       430.       462.
 
 Coefficient Interpretation: For every 1 day increase, we would expect an
 additional 461 new COVID-19 cases.
@@ -688,8 +703,8 @@ Covid_Canada_dates$New <-  predict(object = model.1, newdata = Covid_Canada_date
 tail(Covid_Canada_dates$New, n = 10)
 ```
 
-    ##  [1] 116806.2 117249.9 117693.6 118137.2 118580.9 119024.6 119468.3 119911.9
-    ##  [9] 120355.6 120799.3
+    ##  [1] 117577.9 118024.1 118470.4 118916.6 119362.8 119809.1 120255.3 120701.6
+    ##  [9] 121147.8 121594.0
 
 Each value above represents predictions from our model for the next 10
 days. But how accurate are these predictions really?
@@ -867,10 +882,10 @@ broom::tidy(model_3, conf.int = T)
     ## # A tibble: 4 x 7
     ##   term           estimate std.error statistic  p.value conf.low conf.high
     ##   <chr>             <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
-    ## 1 (Intercept)     124093.      187.   662.    6.15e-37  123696.   124491.
-    ## 2 poly(date, i)1   32745.     1387.    23.6   7.27e-14   29806.    35684.
-    ## 3 poly(date, i)2    3157.     1058.     2.98  8.76e- 3     915.     5399.
-    ## 4 poly(date, i)3    -278.      506.    -0.549 5.91e- 1   -1351.      795.
+    ## 1 (Intercept)     125316.      246.   510.    4.06e-35  124795.   125837.
+    ## 2 poly(date, i)1   37302.     1819.    20.5   6.52e-13   33445.    41159.
+    ## 3 poly(date, i)2    5665.     1388.     4.08  8.68e- 4    2723.     8607.
+    ## 4 poly(date, i)3     626.      664.     0.942 3.60e- 1    -782.     2034.
 
 We could then apply these coefficients to each new date and get a new
 COVID-19 infection total for that day in the future.
@@ -1095,8 +1110,8 @@ COVID_Country_Data(Portugal)
 ```
 
     ##   Country/Region Category Number
-    ## 1       Portugal    cases 823494
-    ## 2       Portugal   deaths  16885
+    ## 1       Portugal    cases 824368
+    ## 2       Portugal   deaths  16887
 
 ``` r
 # Test Canada, since it has Provinces.
@@ -1104,8 +1119,8 @@ COVID_Country_Data(Canada)
 ```
 
     ##   Country/Region Category  Number
-    ## 1         Canada    cases 1017130
-    ## 2         Canada   deaths   23083
+    ## 1         Canada    cases 1027854
+    ## 2         Canada   deaths   23132
 
 ## COVID Country Graph Function
 
