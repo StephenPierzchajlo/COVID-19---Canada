@@ -2,24 +2,24 @@
 title: "COVID-19 Canadian data: pre-processing, visualizations, and modelling"
 author: "Stephen Pierzchajlo"
 output:
-  rmdformats::readthedown:
-  rmdformats::robobook: 
-  html_document:
+  #rmdformats::readthedown:
+  #rmdformats::robobook: 
+  #html_document:
   github_document:
-  rmdformats::html_clean:
-  rmdformats::html_docco:
-  prettydoc::html_pretty:
+  #rmdformats::html_clean:
+  #rmdformats::html_docco:
+  #prettydoc::html_pretty:
     #theme: cayman
     #theme: tactile
     #theme: architect
     #theme: leonids
     #theme: hpstr
-  rmdformats::material: 
-    self_contained: true
-    thumbnails: false
-    lightbox: true
-    gallery: false
-    highlight: tango
+  #rmdformats::material: 
+    #self_contained: true
+    #thumbnails: false
+    #lightbox: true
+    #gallery: false
+    #highlight: tango
     #code_folding: hide
 ---
 
