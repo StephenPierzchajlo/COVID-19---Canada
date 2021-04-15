@@ -81,7 +81,7 @@ library(ggpubr)
 library(broom)
 
 # Create documentation for functions.
-library(docstring)
+#library(docstring)
 ```
 
 <br/>
@@ -123,7 +123,7 @@ cat(" There are", nrow(COVID_Global_Wide), "rows in this dataframe.\n","There ar
 ```
 
     ##  There are 274 rows in this dataframe.
-    ##  There are 450 columns in this dataframe.
+    ##  There are 452 columns in this dataframe.
 
 There are a massive number of columns. Why is that? I decided to take a
 look at the overall structure of one of the dataframes.
@@ -133,7 +133,7 @@ look at the overall structure of one of the dataframes.
 COVID_Global_Wide[1:10, ]
 ```
 
-    ## # A tibble: 10 x 450
+    ## # A tibble: 10 x 452
     ##    `Province/State`  `Country/Region`   Lat   Long `1/22/20` `1/23/20` `1/24/20`
     ##    <chr>             <chr>            <dbl>  <dbl>     <dbl>     <dbl>     <dbl>
     ##  1 <NA>              Afghanistan       33.9  67.7          0         0         0
@@ -146,7 +146,7 @@ COVID_Global_Wide[1:10, ]
     ##  8 <NA>              Armenia           40.1  45.0          0         0         0
     ##  9 Australian Capit~ Australia        -35.5 149.           0         0         0
     ## 10 New South Wales   Australia        -33.9 151.           0         0         0
-    ## # ... with 443 more variables: 1/25/20 <dbl>, 1/26/20 <dbl>, 1/27/20 <dbl>,
+    ## # ... with 445 more variables: 1/25/20 <dbl>, 1/26/20 <dbl>, 1/27/20 <dbl>,
     ## #   1/28/20 <dbl>, 1/29/20 <dbl>, 1/30/20 <dbl>, 1/31/20 <dbl>, 2/1/20 <dbl>,
     ## #   2/2/20 <dbl>, 2/3/20 <dbl>, 2/4/20 <dbl>, 2/5/20 <dbl>, 2/6/20 <dbl>,
     ## #   2/7/20 <dbl>, 2/8/20 <dbl>, 2/9/20 <dbl>, 2/10/20 <dbl>, 2/11/20 <dbl>,
@@ -248,7 +248,7 @@ for(i in length(colnames(COVID_Global_Long_Date)) - 2){
 
     ## 
     ##   TRUE 
-    ## 121758
+    ## 122304
 
 Everything matches, so I’m going to add the cases column from the deaths
 dataframe to the cases dataframe. Additionally, I’ll call this new
@@ -369,14 +369,14 @@ Looking at the data below…
 str(Covid_Canada)
 ```
 
-    ## tibble [3,217 x 7] (S3: tbl_df/tbl/data.frame)
-    ##  $ Province/State: chr [1:3217] "Saskatchewan" "Alberta" "British Columbia" "Manitoba" ...
-    ##  $ Country/Region: chr [1:3217] "Canada" "Canada" "Canada" "Canada" ...
-    ##  $ Lat           : num [1:3217] 52.9 53.9 53.7 53.8 46.6 ...
-    ##  $ Long          : num [1:3217] -106.5 -116.6 -127.6 -98.8 -66.5 ...
-    ##  $ date          : Factor w/ 446 levels "1/22/20","1/23/20",..: 44 45 45 45 45 45 45 45 45 46 ...
-    ##  $ cases         : num [1:3217] 0 1 21 0 0 0 25 2 0 2 ...
-    ##  $ deaths        : num [1:3217] 0 0 0 0 0 0 0 0 0 0 ...
+    ## tibble [3,233 x 7] (S3: tbl_df/tbl/data.frame)
+    ##  $ Province/State: chr [1:3233] "Saskatchewan" "Alberta" "British Columbia" "Manitoba" ...
+    ##  $ Country/Region: chr [1:3233] "Canada" "Canada" "Canada" "Canada" ...
+    ##  $ Lat           : num [1:3233] 52.9 53.9 53.7 53.8 46.6 ...
+    ##  $ Long          : num [1:3233] -106.5 -116.6 -127.6 -98.8 -66.5 ...
+    ##  $ date          : Factor w/ 448 levels "1/22/20","1/23/20",..: 44 45 45 45 45 45 45 45 45 46 ...
+    ##  $ cases         : num [1:3233] 0 1 21 0 0 0 25 2 0 2 ...
+    ##  $ deaths        : num [1:3233] 0 0 0 0 0 0 0 0 0 0 ...
 
 …the date object is a Factor. However, I want it to be a Date object
 instead.
@@ -389,7 +389,7 @@ Covid_Canada$date <- as.Date(Covid_Canada$date, format = "%m/%d/%Y")
 str(Covid_Canada$date)
 ```
 
-    ##  Date[1:3217], format: "0020-03-05" "0020-03-06" "0020-03-06" "0020-03-06" "0020-03-06" ...
+    ##  Date[1:3233], format: "0020-03-05" "0020-03-06" "0020-03-06" "0020-03-06" "0020-03-06" ...
 
 Now we the dates are formatted as actual Date objects.
 
@@ -685,12 +685,12 @@ head(New_Dates)
 ```
 
     ##         date cases deaths DailyCases DailyDeaths
-    ## 1 0021-04-11    NA     NA         NA          NA
-    ## 2 0021-04-12    NA     NA         NA          NA
-    ## 3 0021-04-13    NA     NA         NA          NA
-    ## 4 0021-04-14    NA     NA         NA          NA
-    ## 5 0021-04-15    NA     NA         NA          NA
-    ## 6 0021-04-16    NA     NA         NA          NA
+    ## 1 0021-04-13    NA     NA         NA          NA
+    ## 2 0021-04-14    NA     NA         NA          NA
+    ## 3 0021-04-15    NA     NA         NA          NA
+    ## 4 0021-04-16    NA     NA         NA          NA
+    ## 5 0021-04-17    NA     NA         NA          NA
+    ## 6 0021-04-18    NA     NA         NA          NA
 
 The dataframe just contains a column of future dates, and NA’s for all
 other columns. One issue is that this dataframe starts on the last day
@@ -707,12 +707,12 @@ head(New_Dates)
 ```
 
     ##         date cases deaths DailyCases DailyDeaths
-    ## 2 0021-04-12    NA     NA         NA          NA
-    ## 3 0021-04-13    NA     NA         NA          NA
-    ## 4 0021-04-14    NA     NA         NA          NA
-    ## 5 0021-04-15    NA     NA         NA          NA
-    ## 6 0021-04-16    NA     NA         NA          NA
-    ## 7 0021-04-17    NA     NA         NA          NA
+    ## 2 0021-04-14    NA     NA         NA          NA
+    ## 3 0021-04-15    NA     NA         NA          NA
+    ## 4 0021-04-16    NA     NA         NA          NA
+    ## 5 0021-04-17    NA     NA         NA          NA
+    ## 6 0021-04-18    NA     NA         NA          NA
+    ## 7 0021-04-19    NA     NA         NA          NA
 
 Now the dataframe starts on the NEXT day.
 
@@ -729,21 +729,21 @@ tail(Covid_Canada_dates, n = 15)
 ```
 
     ##            date    cases  deaths DailyCases DailyDeaths
-    ## 399  0021-04-07 129098.6 2886.00       7386          28
-    ## 400  0021-04-08 130127.5 2890.50       8231          36
     ## 401  0021-04-09 131262.5 2895.50       9080          40
     ## 402  0021-04-10 132198.0 2899.75       7484          34
     ## 403  0021-04-11 133161.5 2902.75       7708          24
-    ## 2100 0021-04-12       NA      NA         NA          NA
-    ## 3100 0021-04-13       NA      NA         NA          NA
-    ## 410  0021-04-14       NA      NA         NA          NA
-    ## 510  0021-04-15       NA      NA         NA          NA
-    ## 610  0021-04-16       NA      NA         NA          NA
-    ## 710  0021-04-17       NA      NA         NA          NA
-    ## 810  0021-04-18       NA      NA         NA          NA
-    ## 910  0021-04-19       NA      NA         NA          NA
-    ## 1010 0021-04-20       NA      NA         NA          NA
-    ## 1110 0021-04-21       NA      NA         NA          NA
+    ## 404  0021-04-12 134500.4 2908.00      10711          42
+    ## 405  0021-04-13 135426.8 2912.25       7411          34
+    ## 2100 0021-04-14       NA      NA         NA          NA
+    ## 3100 0021-04-15       NA      NA         NA          NA
+    ## 410  0021-04-16       NA      NA         NA          NA
+    ## 510  0021-04-17       NA      NA         NA          NA
+    ## 610  0021-04-18       NA      NA         NA          NA
+    ## 710  0021-04-19       NA      NA         NA          NA
+    ## 810  0021-04-20       NA      NA         NA          NA
+    ## 910  0021-04-21       NA      NA         NA          NA
+    ## 1010 0021-04-22       NA      NA         NA          NA
+    ## 1110 0021-04-23       NA      NA         NA          NA
 
 Now the dataframe contains future dates as well.
 
@@ -784,15 +784,15 @@ tidy(model.1, conf.int = T)
     ## # A tibble: 2 x 7
     ##   term          estimate  std.error statistic   p.value   conf.low  conf.high
     ##   <chr>            <dbl>      <dbl>     <dbl>     <dbl>      <dbl>      <dbl>
-    ## 1 (Intercept) 327045170. 5623224.        58.2 3.32e-161 315977342. 338112997.
-    ## 2 date              459.       7.90      58.1 3.47e-161       444.       475.
+    ## 1 (Intercept) 330874361. 5553277.        59.6 5.37e-164 319944206. 341804516.
+    ## 2 date              465.       7.80      59.6 5.62e-164       449.       480.
 
 ``` r
 # Print coefficient interpretation.
 print(paste0("For every 1 day increase over the past 300 days, we would expect an additional ", round(tidy(model.1, conf.int = T)[2,2], 2), " new Covid-19 infections"))
 ```
 
-    ## [1] "For every 1 day increase over the past 300 days, we would expect an additional 459.32 new Covid-19 infections"
+    ## [1] "For every 1 day increase over the past 300 days, we would expect an additional 464.7 new Covid-19 infections"
 
 <br/>
 
@@ -806,7 +806,7 @@ days. The model is this:
 print(paste0("cases = ", round(tidy(model.1, conf.int = T)[1,2], 2), " + ", round(tidy(model.1, conf.int = T)[2,2], 2), " * date"))
 ```
 
-    ## [1] "cases = 327045169.74 + 459.32 * date"
+    ## [1] "cases = 330874361.11 + 464.7 * date"
 
 Thus, this model can be used to predict new cases, by simply inputing
 the current date into this equation and calculating cases.
@@ -819,8 +819,8 @@ Covid_Canada_dates$New <-  predict(object = model.1, newdata = Covid_Canada_date
 tail(Covid_Canada_dates$New, n = 10)
 ```
 
-    ##  [1] 121521.7 121981.0 122440.3 122899.6 123358.9 123818.3 124277.6 124736.9
-    ##  [9] 125196.2 125655.5
+    ##  [1] 123145.7 123610.4 124075.1 124539.8 125004.5 125469.2 125933.9 126398.6
+    ##  [9] 126863.3 127328.0
 
 Each value above represents predictions from my model for the next 10
 days. I can quickly see how close my predictions are to the actual
@@ -835,21 +835,21 @@ data.frame("Date" = tail(Covid_Canada_dates$date, n = 15),
 ```
 
     ##          Date Actual.Cases Predicted.Cases
-    ## 1  0021-04-07     129098.6        119225.1
-    ## 2  0021-04-08     130127.5        119684.4
-    ## 3  0021-04-09     131262.5        120143.7
-    ## 4  0021-04-10     132198.0        120603.0
-    ## 5  0021-04-11     133161.5        121062.3
-    ## 6  0021-04-12           NA        121521.7
-    ## 7  0021-04-13           NA        121981.0
-    ## 8  0021-04-14           NA        122440.3
-    ## 9  0021-04-15           NA        122899.6
-    ## 10 0021-04-16           NA        123358.9
-    ## 11 0021-04-17           NA        123818.3
-    ## 12 0021-04-18           NA        124277.6
-    ## 13 0021-04-19           NA        124736.9
-    ## 14 0021-04-20           NA        125196.2
-    ## 15 0021-04-21           NA        125655.5
+    ## 1  0021-04-09     131262.5        120822.2
+    ## 2  0021-04-10     132198.0        121286.9
+    ## 3  0021-04-11     133161.5        121751.6
+    ## 4  0021-04-12     134500.4        122216.3
+    ## 5  0021-04-13     135426.8        122681.0
+    ## 6  0021-04-14           NA        123145.7
+    ## 7  0021-04-15           NA        123610.4
+    ## 8  0021-04-16           NA        124075.1
+    ## 9  0021-04-17           NA        124539.8
+    ## 10 0021-04-18           NA        125004.5
+    ## 11 0021-04-19           NA        125469.2
+    ## 12 0021-04-20           NA        125933.9
+    ## 13 0021-04-21           NA        126398.6
+    ## 14 0021-04-22           NA        126863.3
+    ## 15 0021-04-23           NA        127328.0
 
 The predicted cases don’t match the actual cases too well. I’ll plot the
 regression line over the data to see what the disparity might be.
@@ -1079,10 +1079,10 @@ tidy(model.2, conf.int = T)
     ## # A tibble: 4 x 7
     ##   term           estimate std.error statistic  p.value conf.low conf.high
     ##   <chr>             <dbl>     <dbl>     <dbl>    <dbl>    <dbl>     <dbl>
-    ## 1 (Intercept)     130212.      279.    467.   1.63e-34  129621.   130803.
-    ## 2 poly(date, 3)1   48294.     2062.     23.4  8.30e-14   43922.    52666.
-    ## 3 poly(date, 3)2    8413.     1573.      5.35 6.54e- 5    5078.    11747.
-    ## 4 poly(date, 3)3    1013.      753.      1.35 1.97e- 1    -583.     2609.
+    ## 1 (Intercept)    131885.       289.   456.    2.41e-34  131272.   132499.
+    ## 2 poly(date, 3)1  49050.      2140.    22.9   1.16e-13   44513.    53587.
+    ## 3 poly(date, 3)2   6579.      1633.     4.03  9.70e- 4    3118.    10040.
+    ## 4 poly(date, 3)3    -78.5      781.    -0.100 9.21e- 1   -1735.     1578.
 
 ``` r
 # Predict COVID-19 infections with my model.
@@ -1100,21 +1100,21 @@ data.frame("Date" = tail(Covid_Canada_dates$date, n = 15),
 ```
 
     ##          Date Actual.Cases Predicted.Cases
-    ## 1  0021-04-07     129098.6        129127.7
-    ## 2  0021-04-08     130127.5        130099.0
-    ## 3  0021-04-09     131262.5        131099.5
-    ## 4  0021-04-10     132198.0        132128.9
-    ## 5  0021-04-11     133161.5        133186.6
-    ## 6  0021-04-12           NA        134272.2
-    ## 7  0021-04-13           NA        135384.8
-    ## 8  0021-04-14           NA        136523.5
-    ## 9  0021-04-15           NA        137687.3
-    ## 10 0021-04-16           NA        138875.0
-    ## 11 0021-04-17           NA        140085.1
-    ## 12 0021-04-18           NA        141316.1
-    ## 13 0021-04-19           NA        142566.0
-    ## 14 0021-04-20           NA        143833.0
-    ## 15 0021-04-21           NA        145114.7
+    ## 1  0021-04-09     131262.5        131129.6
+    ## 2  0021-04-10     132198.0        132155.5
+    ## 3  0021-04-11     133161.5        133208.6
+    ## 4  0021-04-12     134500.4        134288.2
+    ## 5  0021-04-13     135426.8        135393.2
+    ## 6  0021-04-14           NA        136522.8
+    ## 7  0021-04-15           NA        137675.6
+    ## 8  0021-04-16           NA        138850.1
+    ## 9  0021-04-17           NA        140044.9
+    ## 10 0021-04-18           NA        141258.1
+    ## 11 0021-04-19           NA        142487.6
+    ## 12 0021-04-20           NA        143731.1
+    ## 13 0021-04-21           NA        144986.3
+    ## 14 0021-04-22           NA        146250.3
+    ## 15 0021-04-23           NA        147520.2
 
 The predicted data matches the actual cases pretty closely for days that
 have case data. Thus, the future predictions might now be a little bit
@@ -1173,10 +1173,11 @@ Country_List <- function(){
     
     install.packages(packages[!installed_packages], repos = c(CRAN = "https://cran.rstudio.com"))
     
-  }
+    }
   
   # Packages loading
   invisible(lapply(packages, library, character.only = TRUE))
+
   
   # Total Global Cases Data
   x <-read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"))
@@ -1644,6 +1645,21 @@ running the next line.
 
 ``` r
 # Create documentation for functions.
+# Make package list.
+packages <- c('docstring')    
+  
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+
+if (any(installed_packages == FALSE)) {
+  
+  install.packages(packages[!installed_packages], repos = c(CRAN = "https://cran.rstudio.com"))
+  
+  }
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+  
 library(docstring)
 ```
 
@@ -1653,14 +1669,19 @@ I made 5 functions, so I will link to their directories so they can be
 automatically called.
 
 ``` r
+# Source Country_List()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\Country_List.R", local = knitr::knit_global())
 
+# Source COVID_Country_Data()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Data.R", local = knitr::knit_global())
 
+# Source COVID_Country_Graph()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Graph.R", local = knitr::knit_global())
 
+# Source COVID_Cumulative_Graph()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Cumulative_Graph.R", local = knitr::knit_global())
 
+# Source COVID_Country_Daily_Graph()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Daily_Graph.R", local = knitr::knit_global())
 ```
 
@@ -1780,16 +1801,16 @@ COVID_Country_Data(Israel)
 ```
 
     ##   Country/Region Category Number
-    ## 1         Israel    cases 835933
-    ## 2         Israel   deaths   6296
+    ## 1         Israel    cases 836334
+    ## 2         Israel   deaths   6309
 
 ``` r
 COVID_Country_Data(Brazil)
 ```
 
     ##   Country/Region Category   Number
-    ## 1         Brazil    cases 13482023
-    ## 2         Brazil   deaths   353137
+    ## 1         Brazil    cases 13599994
+    ## 2         Brazil   deaths   358425
 
 ``` r
 COVID_Country_Graph(Israel)
@@ -1854,3 +1875,24 @@ COVID_Country_Daily_Graph(Brazil)
     ## [[2]]
 
 ![](COVID_Canada_files/figure-gfm/unnamed-chunk-28-4.png)<!-- -->
+
+<br/>
+
+In addition to the functions, I have also included simple documentation
+with these functions. For instance, the user of these functions could
+review the Country\_List() function to see how to use it like this:
+?Country\_List(). I can’t display the output in R Markdown, but when
+used in R Studio, documentation for each function appears in the right
+paned Helper.
+
+# Future Work
+
+I am hoping to add moreflexibility to these functions. First, I want to
+add a time machine option. COVID-19 will eventually be over, so the data
+will eventually have nothing. Therefore, I want to add an argument that
+lets you pick a date, and then the function will pretend we are on that
+date. I also want to let people compare different countries on the same
+graph, sort of like I did with the province comparision graphs. However,
+this would require a per capita transformation of cases to account for
+large population differences. This would be a big undertaking, and not
+one I want to do for this assignment. But that is it.

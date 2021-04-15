@@ -1,39 +1,35 @@
 ---
-title: "COVID-19 Canadian data: pre-processing, visualizations, and modelling"
+title: "Exploring COVID-19 Infections In Canada"
 author: "Stephen Pierzchajlo"
 output:
-  #rmdformats::readthedown:
-  #rmdformats::robobook: 
-  #html_document:
   github_document:
-  #rmdformats::html_clean:
-  #rmdformats::html_docco:
-  #prettydoc::html_pretty:
-    #theme: cayman
-    #theme: tactile
-    #theme: architect
-    #theme: leonids
-    #theme: hpstr
-  #rmdformats::material: 
     #self_contained: true
     #thumbnails: false
     #lightbox: true
     #gallery: false
     #highlight: tango
     #code_folding: hide
+  #html_document:
+  #rmdformats::readthedown:
 ---
+
+```{r mountie, echo=FALSE, fig.cap="A Royal Canadian Mountain Police officer holding a beaver", out.width = '100%'}
+
+knitr::include_graphics("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\data\\mountie.png")
+
+```
 
 # Introduction
 
-I have used R for a few years now, and every project I am currently working on has a completed R script already made. Therefore, it didn't make sense to me to just redo my analyses. I decided I wanted to do something new for this course, and do something I had never done before. One aspect of programming that I never was comfortable with was writing functions. So the ultimate goal of this project is to write functions that will perform an entire analysis in an interesting way, while still staying within the parameters of the assignment.
+I have used R for a few years now, and every project I am currently working on has a completed R script already made. Therefore, it didn't make sense for me to just redo my analyses. I decided I wanted to do something new for this course, and do something I had never done before. One aspect of programming that I never was comfortable with was writing functions. So the ultimate goal of this project is to write functions that will perform an entire analysis in an interesting way, while still staying within the parameters of the assignment.
 
 ## My project idea
 
-Many months ago I analysed data for a paper on COVID-19. The paper is currently under review, but all analyses, data, and scripts can be found here: https://osf.io/c8zhn/. Part of my work involved getting COVID-19 infection rate data for 4 specific weeks in March/April to use as a random effects parameter in a multiple regression model. The specific COVID-19 repository I found gets updated daily and contains data for every country (and every sub-region in that country) in the world. I thought it would be interesting to create a set of functions that could analyse any country the user chooses in a variety of ways, and output COVID-19 related statistics and visualisations of infection trends. So that is the ultimate goal of this project.
+Many months ago I analysed data for a paper on COVID-19. The paper is currently under review, but all analyses, data, and scripts can be found here: https://osf.io/c8zhn/. Additionally, the github repository for this project can be found here: https://github.com/StephenPierzchajlo/COVID-19---Canada. Part of my work involved getting COVID-19 infection rate data for 4 specific weeks in March/April to use as a random effects parameter in a multiple regression model. The specific COVID-19 repository I found gets updated daily and contains data for every country in the world. I thought it would be interesting to create a set of functions that could be used to analyse COVID-19 data for any country in a variety of ways, and output COVID-19 related statistics and visualisations of infection trends. This idea will be the goal of the current project.
 
 <br/>
 
-In this project, I will first analyse COVID-19 data for 1 country in great detail, and then ultimately automate these analyses with a number of functions that generalise across any country the user wants. Because I am Canadian, I decided to first analyse Canadian COVID-19 data in as much detail as possible. This will include downloading the data from a specific source, wrangling it into a condensed dataframe, graphing the data in various ways, and even doing some basic modelling to predict future infection rates.
+In this project, I will first analyse COVID-19 data for 1 country in great detail, and then automate these analyses using functions I created that generalise across any country I want to see. Because I am Canadian, I decided to first analyse Canadian COVID-19 data in as much detail as possible. This will include downloading the data from a specific source, wrangling it into a condensed dataframe, graphing the data in various ways, and even doing some basic modelling to predict future infection rates.
 
 # Preparations
 
@@ -41,7 +37,7 @@ Here is how I typically start any R project.
 
 ## Remove global environment
 
-I typically remove the global environment everytime I work on a project.
+I usually remove the global environment each time I open my project.
 
 ```{r remove global environment, message=FALSE, warning=FALSE}
 
@@ -52,31 +48,31 @@ rm(list = ls())
 
 <br/>
 
-## Load libraries
+## Load packages
 
-Below is a list of libraries I will use. I comment on each one to indicate what they will be used for.
+Below is a list of packages I will use for my project. I comment on each one to indicate what they will be used for.
 
-```{r load libraries, message=FALSE, warning=FALSE}
+```{r load packages, message=FALSE, warning=FALSE}
 
-# Load libraries.
+# Load packages.
 
-# Contains all tidyverse function for data wrangling and graphing.
+# Contains all tidyverse functions for data wrangling and graphing.
 library(tidyverse)
 
-# Used for graphing daily COVID-19 infections.
+# Additional visualisation features for daily COVID-19 infections.
 library(gghighlight)
 
-# Summarising data into condensed dataframe.
+# Summarising data into a condensed dataframe.
 library(plyr)
 
-# Theme for ggplot that I like.
+# Theme for ggplot that I like. Must be installed via github. Use the line that is commented out below if you need to install the package first.
 #devtools::install_github('Mikata-Project/ggthemr')
 library(ggthemr)
 
-# THe ggarrange function plots multiple graphs.
+# The ggarrange function from ggpubr plots multiple graphs.
 library(ggpubr)
 
-# Display coefficients for predictive models.
+# Clean regression summary and display coefficients for predictive models.
 library(broom)
 
 # Create documentation for functions.
@@ -84,13 +80,24 @@ library(docstring)
 
 ```
 
+## Set Root Directory
+
+I want my images to save in the results folder. The code chunk below will set this to my default output folder.
+
+```{r set image directory}
+
+# Set directory for image ouput.
+knitr::opts_knit$set(root.dir = paste0('C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\results'))
+
+```
+
 <br/>
 
-# Data wrangling
+# Data Wrangling
 
 ## Finding a COVID-19 repository
 
-Their are many different COVID-19 data repositories, and I am using two files that contains COVID-19 data for every country in the world. File 1 contains data about total worldwide cases and file 2 contains data about total worldwide deaths. Each time the code chunk below is run, it grabs each *.csv* file from a github repository that has been updated within the past 24 hours. This is ideal, because it means that anytime I run this script, I have COVID-19 statistics that are as recent as yesterday. I prefer this approach to downloading a static *.csv* file because COVID-19 cases and deaths are ongoing and constantly changing.
+Their are many different COVID-19 data repositories, and I am using two files that contain COVID-19 data for every country in the world. File 1 contains data about total worldwide cases and file 2 contains data about total worldwide deaths. Each time the code chunk below is run, it grabs each *.csv* file from a github repository that has been updated within the past 24 hours. This is ideal, because it means that anytime I run this script, I have COVID-19 statistics that are as recent as yesterday. I prefer this approach to downloading a static *.csv* file because COVID-19 cases and deaths are ongoing and constantly changing.
 
 ```{r load data, message=FALSE, warning=FALSE}
 
@@ -108,7 +115,7 @@ COVID_Global_Deaths_Wide <- read_csv(url("https://raw.githubusercontent.com/CSSE
 
 ## Quick look at raw data
 
-First I'll look at the overall shape of one of these dataframes, since I already know they both have the same structure.
+First I'll look at the overall shape of one of these dataframes, since I already know they both have the exact same structure.
 
 ```{r print rows/columns, message=FALSE, warning=FALSE}
 
@@ -144,27 +151,27 @@ COVID_Global_Deaths_Long_Date <- gather(COVID_Global_Deaths_Wide, date, cases, 5
 
 ```
 
-```{r Inspect, message=FALSE, warning=FALSE}
+```{r inspect reshaped data, message=FALSE, warning=FALSE}
 
-# Take a look at several of the first rows.
+# Take a look at several of the first rows of the long-format cases dataframe.
 head(COVID_Global_Long_Date)
 
-# Take a look at several of the first rows.
+# Take a look at several of the first rows of the long-format deaths dataframe.
 head(COVID_Global_Deaths_Long_Date)
 
 ```
 
-Now both dataframes contain a single dates column.
+Now both dataframes contain only a single column for dates. This will be much easier to work with in R.
 
 <br/>
 
 ## Combining dataframes
 
-Since both dataframes come from the same source, they might have the same structure. If so, I could just attach the deaths column from the second dataframe to the first dataframe. Below I loop through both dataframe, and for each column check how many rows have matching information in the same position, and how many have non-matching information. I do this for all pairs of columns except for the cases/deaths (since those should be different). If there are any differences, I should get some false statments below. If there are no differences, I should have a single count that says "true".
+Since both dataframes come from the same source, they might have the same structure. If so, I could just attach the deaths column from the second dataframe to the first dataframe. Below I loop through both dataframes simultaniously, and for each column check how many rows have matching information in the same position, and how many have non-matching information. The loop will do this for all pairs of columns between the two dataframes except for the cases/deaths columns (since those are expected to have different information). If there are any differences between rows in each column pair, I should get some **FALSE** statments outputted by the loop. If there are no differences, I should have a single loop output that says **TRUE**.
 
 ```{r check similarity, message=FALSE, warning=FALSE}
 
-# Check whether the cases and deaths dataframes have exactly the same information per row (except actual cases/deaths).
+# Check whether the cases and deaths dataframes have exactly the same information per row for each column pair (except actual cases/deaths).
 for(i in length(colnames(COVID_Global_Long_Date)) - 2){
   
   print(table(COVID_Global_Long_Date[[i]] == COVID_Global_Deaths_Long_Date[[i]]))
@@ -173,7 +180,7 @@ for(i in length(colnames(COVID_Global_Long_Date)) - 2){
 
 ```
 
-Everything matches, so I'm going to add the cases column from the deaths dataframe to the cases dataframe. Additionally, I'll call this new column "deaths":
+Everything matches, so I'm going to add the cases column from the deaths dataframe to the cases dataframe. Additionally, I'll call this new column "deaths".
 
 ```{r combine dataframes, message=FALSE, warning=FALSE}
 
@@ -186,7 +193,7 @@ Now, I can quickly check the dataframe to see how it looks.
 
 ```{r quick check 2, message=FALSE, warning=FALSE}
 
-# See first few rows.
+# See first few rows of ammended dataframe.
 head(COVID_Global_Long_Date)
 
 ```
@@ -197,7 +204,7 @@ Now I only need to work with this single dataframe instead of 2.
 
 ## Filtering provinces
 
-Because I only want Covid-19 data from Canada, I need to filter out every other non-Canadian country.
+Because I only want Covid-19 data from Canada, I need to filter out every other non-Canadian country from the new dataframe.
 
 ```{r subset 1, message=FALSE, warning=FALSE}
 
@@ -217,14 +224,14 @@ unique(Covid_Canada$`Province/State`)
 
 <br/>
 
-Now there are only 16 provinces in this dataframe, covering every Canadian province. However, I only want to focus on the most populated provinces (many territories have extremely small populations). Therefore, I will focus on the 8 largest Canadian provinces, which will be subsetted below.
+Now there are only 16 provinces in this dataframe, covering every Canadian province (Actually, their are 10 provinces and 3 territories. This dataframe lists 2 quarantined cruise ships and something called Repatriated Travellers). I only want to focus on the most populated regions in Canada, since many territories have extremely small populations. Therefore, I will focus on the 8 largest Canadian provinces, which will be subsetted below.
 
 ```{r subset 2, message=FALSE, warning=FALSE}
 
-# List of Provinces.
+# List of provinces.
 Province_List <- c("Ontario", "Quebec", "New Brunswick", "Manitoba", "British Columbia", "Saskatchewan", "Alberta", "Newfoundland and Labrador")
 
-# For province data, I'm not immediately interested in Canadian Territories, so I'll filter those out.
+# Filter dataframe according to list above.
 Covid_Canada <- Covid_Canada %>%
   filter(`Province/State` %in% Province_List)
 
@@ -243,11 +250,11 @@ Looks good!
 
 <br/>
 
-I also want to filter out dates earlier than March 1st 2020. 
+I also want to filter dates so that the dataframe starts around the time COVID-19 started getting really bad. I do that below, and then print the date from the first row of the filtered dataframe.
 
-```{r filter march, message=FALSE, warning=FALSE}
+```{r filter March, message=FALSE, warning=FALSE}
 
-# Filter canadian provincial data to only include data starting from March 1st.
+# Filter Canadian provincial data to start around the beginning of March 2020.
 Covid_Canada <- Covid_Canada[352:nrow(Covid_Canada), ]
 
 # Check first row of date column,
@@ -255,7 +262,7 @@ Covid_Canada[1,5]
 
 ```
 
-It appears now that the dataframe starts around the first of march. My filtering wasn't exact, but I think it's good enough.
+Now the dataframe starts around the beginning of March. This was a bit before quarantines started occurring, so I think this is good enough.
 
 <br/>
 
@@ -270,11 +277,11 @@ str(Covid_Canada)
 
 ```
 
-...the date object is a Factor. However, I want it to be a Date object instead.
+...the date variable is a factor. R allows you to have date variables, so I want to change all dates to be variables of this type.
 
 ```{r change to date, message=FALSE, warning=FALSE}
 
-# Convert date column to date format for cases dataframe.
+# Convert date column to date format.
 Covid_Canada$date <- as.Date(Covid_Canada$date, format = "%m/%d/%Y")
 
 # Display date variable type.
@@ -282,13 +289,13 @@ str(Covid_Canada$date)
 
 ```
 
-Now we the dates are formatted as actual Date objects.
+Now the dates are formatted as actual date variables
 
 <br/>
 
 ## Subsetting dataframe
 
-I also don't need the Country/Region, Lat, or Long columns, so I'm going to get rid of them.
+I don't need the Country/Region, Lat, or Long columns, so I'm going to get rid of them.
 
 ```{r remove columns, message=FALSE, warning=FALSE}
 
@@ -301,7 +308,7 @@ Covid_Canada <- subset(Covid_Canada, select = c("Province/State", "date", "cases
 
 ## Daily cases/deaths calculation
 
-The Covid-19 cases and deaths data are cumulative, so each row represents the total cases or deaths there have been up to that date. If I want cases per day, I need to add new columns that subtract the current day from the previous day. Below I make two new columns that only have cases/deaths for that day. To do that I take a value from one row, and subtract it from the previous row.
+The Covid-19 cases and deaths data are cumulative, so each row represents the total cases or deaths up to that date. If I want cases per day, I need to add new columns where each row subtracts the current day's cases/deaths from the previous day. Below I make two new columns that only have cases/deaths for that day. To do that I take a value from one row, and subtract it from the previous row.
 
 ```{r daily cases/deaths, message=FALSE, warning=FALSE}
 
@@ -361,7 +368,7 @@ I want to first see the total cases/deaths in each province. I decided to make a
 ggthemr("flat")
 
 # average data in dataframe for graphing.
-Covid_Canada %>%
+Total_Cases_Graph <- Covid_Canada %>%
   ddply(c("`Province/State`"), summarise,
         cases = sum(DailyCases),
         deaths = sum(DailyDeaths)) %>%
@@ -382,23 +389,26 @@ Covid_Canada %>%
   geom_text(aes(label = ifelse(Category=="deaths", Number,"")), position = position_stack(vjust=1.1), hjust = -.2, color = "blue") +
   coord_flip()
 
+# Plot total cases and deaths.
+Total_Cases_Graph
+
 ```
 
 <br/>
 
 ## Cumulative cases/deaths in each province {.tabset}
 
-Below I have a visualisation of the cumulative cases/deaths for each province.
+Below I have a graph of the cumulative cases/deaths for each province.
 
 ### Cumulative cases
 
-```{r per capita cases graph, fig.height=5, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
+```{r cumulative cases graph, fig.height=5, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
 
 # Set Theme.
 ggthemr("flat")
 
 # Cumulative Cases Graph.
-Covid_Canada %>% 
+Cumulative_Cases_Graph <- Covid_Canada %>% 
   ggplot(aes(x = date, y = Cases_Per100000, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
   geom_area() +
   labs(x = paste0(head(format(Covid_Canada$date, "%B %d %y"), n = 1)," to Present"),
@@ -410,6 +420,11 @@ Covid_Canada %>%
   scale_x_date(date_breaks = '1 month', date_labels = '%B') +
   theme(axis.text.x = element_text(face = "bold", size = 9, angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
 
+# Plot cumulative cases.
+Cumulative_Cases_Graph
+
+
+
 ```
 
 <br/>
@@ -418,13 +433,13 @@ Covid_Canada %>%
 
 Below I have a visualisation of the cumulative deaths for each province.
 
-```{r per capita deaths graph, fig.height=5, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
-
+```{r cumulative deaths graph, fig.height=5, fig.width=10, message=FALSE, warning=FALSE, dpi=300}
+#png(filename="faithful.png")
 # Set Theme.
 ggthemr("flat")
 
 #Cumulative Deaths Graph.
-Covid_Canada %>% 
+Cumulative_Deaths_Graph <- Covid_Canada %>% 
   ggplot(aes(x = date, y = Deaths_Per100000, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
   geom_area() +
   labs(x = paste0(head(format(Covid_Canada$date, "%B %d %y"), n = 1)," to Present"),
@@ -436,13 +451,17 @@ Covid_Canada %>%
   scale_x_date(date_breaks = '1 month', date_labels = '%B') +
   theme(axis.text.x = element_text(face = "bold", size = 9, angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5))
 
+# Plot cumulative deaths.
+Cumulative_Deaths_Graph
+
+
 ```
 
 <br/>
 
 ## Daily cases/deaths per province {.tabset}
 
-Below are daily cases and deaths for each province. I used gghighlight to superimpose total cases/deaths behind each provinces cases/deaths.
+Below are daily cases and deaths for each province. These numbers are based on the calculation I did previously to get cases/deaths per day. I used gghighlight to superimpose total cases/deaths behind each provinces cases/deaths.
 
 ### Daily cases
 
@@ -452,7 +471,7 @@ Below are daily cases and deaths for each province. I used gghighlight to superi
 ggthemr("flat")
 
 # Daily Cases Graph.
-Covid_Canada %>% 
+Daily_Cases_Graph <- Covid_Canada %>% 
   ggplot(aes(x = date, y = DailyCases, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
   geom_bar(stat = "identity") +
   facet_wrap(~`Province/State`, nrow = 2, ncol = 4) +
@@ -466,6 +485,9 @@ Covid_Canada %>%
   theme(axis.text.x = element_text(face = "bold", size = 8, angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5)) +
   gghighlight()
 
+# Plot daily cases.
+Daily_Cases_Graph
+
 ```
 
 <br/>
@@ -478,7 +500,7 @@ Covid_Canada %>%
 ggthemr("flat")
 
 # Daily Deaths Graph.
-Covid_Canada %>% 
+Daily_Deaths_Graph <- Covid_Canada %>% 
   ggplot(aes(x = date, y = DailyDeaths, color = `Province/State`, group = `Province/State`, fill = `Province/State`)) +
   geom_bar(stat = "identity") +
   facet_wrap(~`Province/State`, nrow = 2, ncol = 4) +
@@ -492,15 +514,47 @@ Covid_Canada %>%
   theme(axis.text.x = element_text(face = "bold", size = 8, angle = 45, hjust = 1), plot.title = element_text(hjust = 0.5)) +
   gghighlight()
 
-# Reset theme.
-ggthemr_reset()
+# Plot daily deaths.
+Daily_Deaths_Graph
+
+```
+
+## Saving Image Output
+Now I will save each graph I created as a .png file and ouput it to the results folder of the project.
+
+```{r save output, message=FALSE, warning=FALSE}
+
+# Save Graph 1.
+png("Total COVID-19 Cases In Canada.png", units="in", width=8, height=4, res=300)
+Total_Cases_Graph
+invisible(dev.off())
+
+# Save Graph 2.
+png("Cumulative COVID-19 Cases In Canada.png", units="in", width=10, height=5, res=300)
+Cumulative_Cases_Graph
+invisible(dev.off())
+
+# Save Graph 3.
+png("Cumulative COVID-19 Deaths In Canada.png", units="in", width=10, height=5, res=300)
+Cumulative_Deaths_Graph
+invisible(dev.off())
+
+# Save Graph 4.
+png("Daily COVID-19 Cases In Canada.png", units="in", width=10, height=5, res=300)
+Daily_Cases_Graph
+invisible(dev.off())
+
+# Save Graph 5.
+png("Daily COVID-19 Deaths In Canada.png", units="in", width=10, height=5, res=300)
+Daily_Deaths_Graph
+invisible(dev.off())
 
 ```
 
 <br/>
 
 # Modelling
-Because the assignment calls for some sort of analysis, I decided to try some predictive modelling using this dataset. While this dataset lends itself much better to qualitative analysis, I have seen many COVID-19 models that try to predict future cases based on current trends. I have never done anything like that before, but I thought this might be a good way to learn. 
+Because the assignment calls for some sort of analysis, I decided to try some predictive modelling using this dataset. While this dataset lends itself much better to qualitative analysis, I have seen many COVID-19 models that try to predict future cases based on current infection trends. I have never done anything like this before, but I thought this might be a good way to learn how. 
 
 <br/>
 
@@ -508,7 +562,7 @@ Because the assignment calls for some sort of analysis, I decided to try some pr
 
 First, I made a new dataframe for predictive modelling, since I will need to add future dates to it.
 
-```{r message=FALSE, warning=FALSE}
+```{r make model dataframe, message=FALSE, warning=FALSE}
 
 # Make modelling dataframe.
 Covid_Canada_Modelling <- Covid_Canada
@@ -517,9 +571,9 @@ Covid_Canada_Modelling <- Covid_Canada
 
 <br/>
 
-I also want to make a prediction model for all of Canada, so I am summarising by date so that each day averages over all cases/deaths for every province.
+I also want to make a prediction model for all of Canada, not one for each province. Thus, I need to summarise the data by date so that each day averages over all cases/deaths for every province.
 
-```{r message=FALSE, warning=FALSE}
+```{r summarise by date, message=FALSE, warning=FALSE}
 
 # Average cases per day, for all provinces.
 Covid_Canada_dates <- Covid_Canada_Modelling %>%
@@ -535,11 +589,11 @@ Covid_Canada_dates <- Covid_Canada_Modelling %>%
 
 ## Create future predictions dataframe
 
-Most researchers who try to predict future COVID-19 cases use more complicated models with many parameters to account for things like lockdowns, mask compliance, etc. I don't have any predictors like that in the current dataset, so it will be hard to predict anything too far into the future. However, even with a single potentially mediocre predictor like date, I may be able to get an accurate estimate of very short-term trends. Therefore, I will try to predict COVID-19 cases for the next 10 days. To do this, I'm going to make a new dataframe that has the next 10 days after the most recent date today. I will also had blank columns that match the main dataframe so that I can bind their rows later.
+Most researchers who try to predict future COVID-19 cases use more complicated models with many parameters to account for things like lockdowns, mask compliance, etc. I don't have any predictors like that in the current dataset, so it will be hard to predict anything too far into the future. However, even with a single potentially mediocre predictor like date, I may be able to get an accurate estimate of very short-term trends. Therefore, I will try to predict COVID-19 cases for the next 10 days. To do this, I'm going to make a new dataframe that has the next 10 days after the most recent date today. I will also add blank columns that match the main dataframe so that I can bind the rows of this dataframe to the other one later.
 
-```{r message=FALSE, warning=FALSE}
+```{r future dataframe, message=FALSE, warning=FALSE}
 
-# New dataframe that starts the final day of COVID data collection and adds 20 days. Also contains blank columns for other variables.
+# New dataframe that starts the final day of COVID data collection and adds 10 days. Also contains blank columns for other variables.
 New_Dates <- data.frame(date =seq(max(Covid_Canada_Modelling$date),max(Covid_Canada_Modelling$date) + 10,by='days'),
                         cases = NA,
                         deaths = NA,
@@ -553,7 +607,7 @@ head(New_Dates)
 
 The dataframe just contains a column of future dates, and NA's for all other columns. One issue is that this dataframe starts on the last day that COVID-19 data has been collected, since I created the dates by starting with the last date on the main dataframe. So I will just delete the first row from this new dataframe.
 
-```{r message=FALSE, warning=FALSE}
+```{r remove first date, message=FALSE, warning=FALSE}
 
 # Delete first row.
 New_Dates = New_Dates[-1,]
@@ -563,13 +617,13 @@ head(New_Dates)
 
 ```
 
-Now the dataframe starts on the NEXT day.
+Now the dataframe starts on the **NEXT** day.
 
 <br/>
 
-Next, I just add this dataframe to the modelling dataframe.
+Next, I add this dataframe to the modelling dataframe.
 
-```{r message=FALSE, warning=FALSE}
+```{r combine, message=FALSE, warning=FALSE}
 
 # Add future dates to end of modelling dataframe.
 Covid_Canada_dates <- rbind(Covid_Canada_dates, New_Dates)
@@ -585,15 +639,15 @@ Now the dataframe contains future dates as well.
 
 ## Data modelling
 
-Next I need to define the actual model. Unfortunately, I don't have any useful predictors other than date, and just using a date to predict the number of COVID-19 cases is probably severely lacking. Still, using current infection trends from the past might be a good way to estimate very near future infection rates (like infections 5-10 days from now). Therefore, I will set up a model that only uses date to predict infections for the next 10 days.
+Next I need to define the actual model I will use to make predictions. Unfortunately, I don't have any useful predictors other than date, and just using a date to predict the number of COVID-19 cases is probably a severely lacking approach. Still, using current infection trends from the past might be a good way to estimate very near future infection rates (like infections 5-10 days from now). Therefore, I will set up a model that only uses date to predict infections for the next 10 days. I will do this using a series of models, starting with an overly simplistic one.
 
 <br/>
 
 ### Naive model
 
-First, I will fit a very naive model. This model uses a single predictor (dates), and uses data from the past 300 days of Covid-19 infections.
+I first fit a very naive model. This model uses a single predictor (dates), and uses data from the past 300 days of Covid-19 infections. It has no other parameters, and thus, lacks flexibility.
 
-```{r message=FALSE, warning=FALSE}
+```{r naive model, message=FALSE, warning=FALSE}
 
 # Somewhat naive linear model.
 model.1 <- lm(data = tail(Covid_Canada_dates, n = 300), cases ~ date)
@@ -602,9 +656,9 @@ model.1 <- lm(data = tail(Covid_Canada_dates, n = 300), cases ~ date)
 
 <br/>
 
-I can then look at a summary of the coefficients I estmated for my model, and print out an interpretation.
+I can look at a summary of the coefficients I estimated for this model, and print out an interpretation.
 
-```{r message=FALSE, warning=FALSE}
+```{r naive model coefficients, message=FALSE, warning=FALSE}
 
 # Model summary.
 tidy(model.1, conf.int = T)
@@ -618,18 +672,18 @@ print(paste0("For every 1 day increase over the past 300 days, we would expect a
 
 ### Prediction
 
-I now have a simple model, so I will apply those coefficients to the new days. The model is this: 
+I now have a simple model, so I will apply those coefficients to the future dates so I can make predictions. This is the model: 
 
-```{r message=FALSE, warning=FALSE}
+```{r naive model structure, message=FALSE, warning=FALSE}
 
 # Print predictive model summary with coefficients.
 print(paste0("cases = ", round(tidy(model.1, conf.int = T)[1,2], 2), " + ", round(tidy(model.1, conf.int = T)[2,2], 2), " * date"))
 
 ```
 
-Thus, this model can be used to predict new cases, by simply inputing the current date into this equation and calculating cases.
+This model can be used to predict new cases, by simply inputing the current dates into the regression equation and then using the output as the prediction. The code below calculates these new values.
 
-```{r message=FALSE, warning=FALSE}
+```{r naive model predictions, message=FALSE, warning=FALSE}
 
 # Predict COVID-19 infections with my model.
 Covid_Canada_dates$New <-  predict(object = model.1, newdata = Covid_Canada_dates)
@@ -639,20 +693,20 @@ tail(Covid_Canada_dates$New, n = 10)
 
 ```
 
-Each value above represents predictions from my model for the next 10 days. I can quickly see how close my predictions are to the actual COVID-19 cases for those dates, as well as see what the model's future predicitons are by looking at the final 10 of the dataframe.
+Each value above represents predictions of total COVID-19 case for the next 10 days. I can quickly see how close my predictions are to the actual COVID-19 cases for those dates, as well as see what the model's future predicitons are by looking at the final 15 of the dataframe.
 
-```{r message=FALSE, warning=FALSE}
+```{r naive model comparison, message=FALSE, warning=FALSE}
 
-# Look at predictions for future dates.
+# Look at predictions for future dates, as well as predictions for the 5 most rcent days of real data.
 data.frame("Date" = tail(Covid_Canada_dates$date, n = 15),
            "Actual Cases" = tail(Covid_Canada_dates$cases, n = 15),
            "Predicted Cases" = tail(Covid_Canada_dates$New, n = 15))
 
 ```
 
-The predicted cases don't match the actual cases too well. I'll plot the regression line over the data to see what the disparity might be.
+Comparing the actual cases to cases predicted by the model leaves some error. I'll plot the regression line over the data to see why the model might be giving poor predictions.
 
-```{r message=FALSE, warning=FALSE}
+```{r plot naive model, message=FALSE, warning=FALSE}
 
 # Plot data and future predictions regression lne.
 ggplot(data = tail(Covid_Canada_dates, n = 300), aes(x = date, y = cases)) + 
@@ -661,15 +715,15 @@ ggplot(data = tail(Covid_Canada_dates, n = 300), aes(x = date, y = cases)) +
 
 ```
 
-The regression line (red) extends beyond the data (blue), so it's definitely predicting future infections. But, the model isn't a very good fit as the straight line doesn't fit the non-linear data very well. It also seems to be underpredicting Covid-19 infections from January on. This is because a single-degree regression model with just one predictor doesn't allow for any flexibility if the data are even slightly non-linear. So, I will instead fit a series of polynomial models that can increasingly account for the non-linearity seen in the data.
+The regression line (red) extends beyond the data (blue), so it's definitely predicting future infections. But, the model isn't a very good fit as the straight line doesn't fit the non-linear data very well. It also seems to be underpredicting Covid-19 infections from January on. This is probably because a single-degree regression model with just one predictor doesn't allow for any flexibility if the data are even slightly non-linear. To account for this, I will instead try and fit a series of polynomial models that can increasingly account for the non-linearity seen in the data. Polynomials can fit non-linear data, but there is always a concern that they will overfit the data if given too much freedom (i.e. fit to the idiosyncracies of the sample rather than model the data generating mechanism). 
 
 <br/>
 
 ## Polynomial models 1
 
-In the code chunk below, I will repeat the steps I performed above, but this time fit a series of polynomial models. This will be done in a for loop, from 1 degree to 8 degrees. Finally, I will plot each model against the data.
+In the code chunk below, I will repeat the steps I performed above, but this time fit a series of polynomial models. This will be done in a for loop, from 1 degree to 8 degrees. Finally, I will plot each model against the data in a single graph.
 
-```{r message=FALSE, warning=FALSE}
+```{r polynomials 1, message=FALSE, warning=FALSE, fig.height= 6, fig.width=7}
 
 # Make 8 polynomial models, graph them, and collect adjusted R-Square value for each model.
 for(i in 1:8){
@@ -721,19 +775,15 @@ for(i in 1:8){
   # Model Summary.
   assign(paste0("Model_Coeffs", i),broom::tidy(model.1, conf.int = T))
   
+
+  
 }
 
-```
-
-Now I should be able to plot all 8 graphs in a single image.
-
-```{r message=FALSE, warning=FALSE, fig.height=6, fig.width=7}
-
-# Plot all 8 models on a single graph.
-multi <- ggarrange(Graph1, Graph2, Graph3, Graph4, Graph5, Graph6, Graph7, Graph8)
-
-# Annotate multiple graphs.
-annotate_figure(multi,top = text_grob("Predicting Next 10 Days Of COVID", color = "black", face = "bold", size = 14))
+# Create array of graphs.
+ggarrange(Graph1, Graph2, Graph3, Graph4, Graph5, Graph6, Graph7, Graph8) %>%
+  
+  # Annotate multiple graphs.
+  annotate_figure(top = text_grob("Predicting Next 10 Days Of COVID", color = "black", face = "bold", size = 14))
 
 ```
 
@@ -745,7 +795,7 @@ Each model fits differently, with some models fitting the data better than other
 
 Here I will repeat the loop above, but this time predict the next 10 days of infection using only the previous 30 days as a predictor.
 
-```{r message=FALSE, warning=FALSE}
+```{r polynomials 2, message=FALSE, warning=FALSE, fig.height= 6, fig.width=7}
 
 # Make 8 polynomial models, graph them, and collect adjusted R-Square value for each model.
 for(i in 1:8){
@@ -804,27 +854,22 @@ for(i in 1:8){
   
   # Model Summary.
   assign(paste0("Model_Coeffs", i),broom::tidy(model.1, conf.int = T))
+  
 
-  }
 
+}
 
-```
-
-Again, I can now plot all 8 graphs as 1 image.
-
-```{r message=FALSE, warning=FALSE, fig.width=7, fig.height=6}
-
-# Plot all 8 models on a single graph.
-multi <- ggarrange(Graph1, Graph2, Graph3, Graph4, Graph5, Graph6, Graph7, Graph8)
-
-# Annotate multiple graphs.
-annotate_figure(multi,top = text_grob("Predicting Next 10 Days Of COVID", color = "black", face = "bold", size = 14))
+# Create array of graphs.
+ggarrange(Graph1, Graph2, Graph3, Graph4, Graph5, Graph6, Graph7, Graph8) %>%
+  
+  # Annotate multiple graphs.
+  annotate_figure(top = text_grob("Predicting Next 10 Days Of COVID", color = "black", face = "bold", size = 14))
 
 ```
 
-Some of the higher order polynomial fits seem to be making absurdly unbelievable future predictions. However, some of the lower-order polynomial models look reasonable. I'm going to focus on the 3-order polynomial (which looks alright) and pretend it was the model I thought was best.
+Some of the higher order polynomial fits seem to be making absurdly unbelievable future predictions. However, some of the lower-order polynomial models look reasonable. I'm going to focus on the 3-order polynomial because it looks like the most reasonable fit, and pretend it was the model I thought was best. Below, I will repeat the original fitting process used for the naive model, but this time use the 3-order polynomial to fit only the past 30 days of COVID-19 infections.
 
-```{r message=FALSE, warning=FALSE}
+```{r check model, message=FALSE, warning=FALSE}
 
 # Make modelling dataframe.
 Covid_Canada_Modelling <- Covid_Canada
@@ -852,17 +897,17 @@ Covid_Canada_dates <- rbind(Covid_Canada_dates, New_Dates)
 
 model.2 <- lm(data = tail(Covid_Canada_dates, n = 30), cases ~ poly(date, 3))
 
-# Model summary.
-tidy(model.2, conf.int = T)
-
 # Predict COVID-19 infections with my model.
 Covid_Canada_dates$New <-  predict(object = model.1, newdata = Covid_Canada_dates)
 
+# Model summary.
+tidy(model.2, conf.int = T)
+
 ```
 
-I could then apply these coefficients to each new date and get a new COVID-19 infection total for that day in the future.
+Now to predict cases, each date is multiplied by the intercept and the 3 polynomial coefficients. Like before, I can apply these coefficients to each new date and get a new COVID-19 infection total for that day in the future.
 
-```{r message=FALSE, warning=FALSE}
+```{r new predictions, message=FALSE, warning=FALSE}
 
 # Look at predictions for future dates.
 data.frame("Date" = tail(Covid_Canada_dates$date, n = 15),
@@ -881,15 +926,15 @@ It should be stressed, however, that this model still probably isn't very good. 
 
 # Functions  {.tabset}
 
-The dataset I used contains data from every country in the world, not just Canada. If I wanted to repeat the graphs and analyses I did, I would have to painstakingly replace each code chunk with the new country and re-run everything. I decided to make some functions that not only repeat the analyses I did for Canada, but allow the user to simply add the country they want to the function, and instantly get up to date COVID graphs and numbers for that country.
+The dataset I used contains data from every country in the world, not just Canada. If I wanted to make new graphs and perform new analyses on another country, I would have to painstakingly replace each code chunk with new inputs and re-run everything. I decided to make some functions that not only repeat the analyses I did for Canada, but allow me to simply add the country I want to the function, and instantly get up to date COVID-19 graphs and statistics for that country.
 
 <br/>
 
-## Country List
+## Country_List()
 
-For users of these functions, it will be useful to get a list of names of countries that can be used. This function takes no arguments, and simply outputs a list of all countries the user could choose from.
+When using these functions, it will be useful to get a list of names of countries that can be used. This first function takes no arguments, and simply outputs a list of all countries I could choose from. 
 
-```{r message=FALSE, warning=FALSE}
+```{r make function 1, message=FALSE, warning=FALSE}
 
 Country_List <- function(){
   
@@ -915,10 +960,11 @@ Country_List <- function(){
     
     install.packages(packages[!installed_packages], repos = c(CRAN = "https://cran.rstudio.com"))
     
-  }
+    }
   
   # Packages loading
   invisible(lapply(packages, library, character.only = TRUE))
+
   
   # Total Global Cases Data
   x <-read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"))
@@ -934,11 +980,11 @@ Country_List <- function(){
 ```
 
 
-## Total cases/deaths in total country
+## COVID_Country_Data()
 
-This function outputs the number of cases and deaths up until the current date in the country chosen by the user. It is only a text output, and probably is not that important since the next function will output a graph, but I thought it was nice to include in case someone wants to view it.
+This function outputs the number of cases and deaths up until the current date in the country inputted into the function. It is only a text output, and probably is not that important since the next function will output a graph, but I thought it was nice to include this in case I want to just quickly see a country's statistics.
 
-```{r message=FALSE, warning=FALSE}
+```{r make function 2, message=FALSE, warning=FALSE}
 
 COVID_Country_Data <- function(country){
   
@@ -1031,9 +1077,11 @@ COVID_Country_Data <- function(country){
 ```
 
 
-## COVID Country Graph Function
+## COVID_Country_Graph()
 
-```{r message=FALSE, warning=FALSE}
+This function plots a countries total COVID-19 cases and deaths in a side-by-side bar graph.
+
+```{r make function 3, message=FALSE, warning=FALSE}
 
 COVID_Country_Graph <- function(country){
   
@@ -1142,9 +1190,11 @@ COVID_Country_Graph <- function(country){
 ```
 
 
-## COVID Country Cumulative Graph Function
+## COVID_Country_Cumulative_Graph()
 
-```{r message=FALSE, warning=FALSE}
+This function outputs 2 graphs, each showing either cumulative cases or cumulative deaths for the country inputted into the function.
+
+```{r make function 4, message=FALSE, warning=FALSE}
 
 COVID_Country_Cumulative_Graph <- function(country){
   
@@ -1244,10 +1294,11 @@ COVID_Country_Cumulative_Graph <- function(country){
 
 ```
 
+## COVID_Country_Daily_Graph()
 
-## COVID Country Daily Graph Function
+This final function plots daily cases and deaths for the country inputted into the function.
 
-```{r message=FALSE, warning=FALSE}
+```{r make function 5, message=FALSE, warning=FALSE}
 
 COVID_Country_Daily_Graph <- function(country){
   
@@ -1377,7 +1428,7 @@ COVID_Country_Daily_Graph <- function(country){
 
 ```
 
-# Testing Functions
+# Testing Each Function
 
 Here I am going to use each function as if I had not done any of the previous work in this R project. So, I will first delete everything that has been done up to this point.
 
@@ -1388,69 +1439,115 @@ rm(list = ls())
 
 ```
 
-Next, I will load the docstring package manually since it cannot be loaded from inside a function. The docstring package allows you to add documentation to a function. If it isn't installed, install before running the next line.
+Next, I will load the docstring package manually since it cannot be loaded from inside a function. The docstring package allows you to add documentation to a function. THis next code chunk checks whether the package is installed. If it is, nothing happens. If it isn't, R installs the package. Finally, docsting is loaded into the current library.
 
 ```{r load docstring, message=FALSE, warning=FALSE}
 # Create documentation for functions.
+# Make package list.
+packages <- c('docstring')    
+  
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+
+if (any(installed_packages == FALSE)) {
+  
+  install.packages(packages[!installed_packages], repos = c(CRAN = "https://cran.rstudio.com"))
+  
+  }
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+  
 library(docstring)
+  
 ```
 
 ## Source Functions
 
 I made 5 functions, so I will link to their directories so they can be automatically called.
 
-```{r message=FALSE, warning=FALSE}
+```{r source functions, message=FALSE, warning=FALSE}
+
+# Source Country_List()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\Country_List.R", local = knitr::knit_global())
 
+# Source COVID_Country_Data()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Data.R", local = knitr::knit_global())
 
+# Source COVID_Country_Graph()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Graph.R", local = knitr::knit_global())
 
+# Source COVID_Cumulative_Graph()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Cumulative_Graph.R", local = knitr::knit_global())
 
+# Source COVID_Country_Daily_Graph()
 source("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\bin\\COVID_Country_Daily_Graph.R", local = knitr::knit_global())
+
 ```
 
 ## Trying Functions Out
 
-Here I will try the functions out with a few countries other than canada to see what the output looks like. First, I will look a the list of countries and pick a few.
+Here I will try the functions out with a few countries other than Canada to see what the output looks like. First, I will look at the list of countries and pick a few.
 
-```{r message=FALSE, warning=FALSE}
+```{r test function 1, message=FALSE, warning=FALSE}
 
 Country_List()
 
 ```
 
-From the list above, I will pick a few countries. Israel has seen cases plummet, so I would like to see their trends. Brazil has seen an exponential rise in cases, so I would like to see this as well.
+There are 192 countries I can use with the next 4 functions. From the list above, I will pick a few countries. Israel has seen cases plummet, so I would like to see what their data look like. Brazil has seen an exponential rise in cases, so I would like to see their cases as well.
 
-```{r message=FALSE, warning=FALSE}
+```{r test function 2, message=FALSE, warning=FALSE}
 
+# Get COVID-19 statistical output for Israel and Brazil.
 COVID_Country_Data(Israel)
 COVID_Country_Data(Brazil)
 
-
 ```
 
+<br/>
 
-```{r message=FALSE, warning=FALSE}
+Next, I'm going to plot bar graphs that give the same data as the function above.
 
+```{r test function 3, message=FALSE, warning=FALSE}
+
+# Plot bar graphs of COVID-19 cases and deaths in Israel and Brazil.
 COVID_Country_Graph(Israel)
 COVID_Country_Graph(Brazil)
 
 ```
 
+<br/>
 
-```{r message=FALSE, warning=FALSE}
+Now, I will plot cumulative COVID-19 cases and deaths in Israel and Brazil.
+
+```{r test function 4, message=FALSE, warning=FALSE}
 
 COVID_Country_Cumulative_Graph(Israel)
 COVID_Country_Cumulative_Graph(Brazil)
 
 ```
 
+<br/>
 
-```{r message=FALSE, warning=FALSE}
+Finally, I will plot daily COVID-19 cases and deaths in Israel and Brazil.
+
+```{r test function 5, message=FALSE, warning=FALSE}
 
 COVID_Country_Daily_Graph(Israel)
 COVID_Country_Daily_Graph(Brazil)
+
+```
+
+<br/>
+
+In addition to these functions, I have also included simple documentation to go along with each one. For instance, the user of these functions could review the Country_List() function to see how to use it like this: ?Country_List(). I can't display the output in R Markdown, but when used in R Studio, documentation for each function appears in the right pane under the Helper tab.
+
+# Future Work
+I am hoping to add more flexibility to these functions. First, I want to add a time machine option. COVID-19 will eventually be over, so the data will eventually be of historical importance. Therefore, I want to add an argument that lets you pick a date, and then the function will pretend you are looking at the data at that date in time. I also want to let people compare different countries on the same graph, sort of like I did with the province comparision graphs. However, this would require a per capita transformation of cases to account for large population differences. This would be a big undertaking, and not one I want to do for this assignment. I also didn't have the functions output side-by-side cases/deaths graphs because the assigment wanted to functions to output 2 pieces of information. However, it would be more asthetically correct to do so, and I plan on implimenting a feature like this as well.
+
+```{r Canadian Flag, echo=FALSE, out.width = '100%'}
+
+knitr::include_graphics("C:\\Users\\STPI0560\\Desktop\\R Projects\\COVID-19---Canada\\data\\Canadian Flag.png")
 
 ```
