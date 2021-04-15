@@ -1,16 +1,16 @@
 ---
 title: "Exploring COVID-19 Infections In Canada"
 author: "Stephen Pierzchajlo"
-output:
-  github_document:
-    #self_contained: true
-    #thumbnails: false
-    #lightbox: true
-    #gallery: false
-    #highlight: tango
-    #code_folding: hide
+output: github_document
   #html_document:
   #rmdformats::readthedown:
+  #github_document:
+  #  self_contained: true
+  #  thumbnails: false
+  #  lightbox: true
+  #  gallery: false
+  #  highlight: tango
+    #code_folding: hide
 ---
 
 ```{r mountie, echo=FALSE, fig.cap="A Royal Canadian Mountain Police officer holding a beaver", out.width = '100%'}
