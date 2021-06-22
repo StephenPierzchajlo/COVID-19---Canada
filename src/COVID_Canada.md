@@ -2,18 +2,6 @@ Exploring COVID-19 Infections In Canada
 ================
 Stephen Pierzchajlo
 
-<div class="figure">
-
-<img src="C:\Users\STPI0560\Desktop\R Projects\COVID-19---Canada\data\mountie.png" alt="A Royal Canadian Mountain Police officer holding a beaver" width="100%" />
-
-<p class="caption">
-
-A Royal Canadian Mountain Police officer holding a beaver
-
-</p>
-
-</div>
-
 # Introduction
 
 I have used R for a few years now, and every project I am currently
